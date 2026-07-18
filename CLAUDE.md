@@ -5,9 +5,11 @@ requirements ฉบับเต็มอยู่ที่ `docs/spec.md` (singl
 
 ## ภาพรวม
 
-StockApp = ระบบคลังสินค้าเบิกจ่ายภายในองค์กร (ไม่มี login) — รับเข้า/เบิกออก,
+StockApp = ระบบคลังสินค้าเบิกจ่ายภายในองค์กร — รับเข้า/เบิกออก,
 ยอดคงเหลือเรียลไทม์, กันเบิกเกินแบบ atomic, Dashboard + แจ้งเตือนใกล้หมด,
 ประวัติ + แก้ไข/ลบย้อนหลัง + Export CSV
+มีระบบ Auth (login / register / forgot-password / reset-password) ด้วย
+**Better Auth** และ guard ทุกหน้าด้วย `proxy.ts` (Next.js 16) — ดูขอบเขตใน spec
 
 ## Tech Stack
 

@@ -1,8 +1,8 @@
 'use client'
 
+import { Trash2 } from 'lucide-react'
 import { useTransition } from 'react'
 import { deleteProduct } from '@/app/products/actions'
-import { Button } from '@/components/ui/button'
 
 type Props = {
   id: string
@@ -26,15 +26,14 @@ export function DeleteProductButton({ id, name }: Props) {
   }
 
   return (
-    <Button
+    <button
       type="button"
-      variant="ghost"
-      size="sm"
-      className="text-destructive hover:text-destructive"
+      aria-label="ลบ"
       onClick={handleDelete}
       disabled={pending}
+      className="bg-status-out-bg text-status-out flex size-8 items-center justify-center rounded-lg transition-opacity hover:opacity-80 disabled:opacity-40"
     >
-      {pending ? 'กำลังลบ…' : 'ลบ'}
-    </Button>
+      <Trash2 className="size-3.5" strokeWidth={2} />
+    </button>
   )
 }

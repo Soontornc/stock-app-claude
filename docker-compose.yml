@@ -1,21 +1,77 @@
 services:
-  postgres:
-    image: postgres:17-alpine
-    container_name: stockapp-postgres
+  db:
+    image: postgres:16-alpine
+    container_name: stockapp-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: stockuser
-      POSTGRES_PASSWORD: stockpass
-      POSTGRES_DB: stockdb
+      POSTGRES_USER: ${POSTGRES_USER:-stockuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-stockpass}
+      POSTGRES_DB: ${POSTGRES_DB:-stockdb}
     ports:
-      - '5432:5432'
+      - '5433:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U stockuser -d stockdb']
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-stockuser} -d ${POSTGRES_DB:-stockdb}',
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - stock-network
+
+  # Runs `prisma migrate deploy` then `prisma db seed` once, then exits.
+  # prisma/seed.ts wipes and recreates rows each run, so re-seeding on every
+  # `docker compose up` is safe/idempotent.
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: stockapp-migrate
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-stockuser}:${POSTGRES_PASSWORD:-stockpass}@db:5432/${POSTGRES_DB:-stockdb}?schema=public
+    # `prisma db seed` spawns `tsx prisma/seed.ts` directly (no shell), so tsx
+    # must already be resolvable on PATH — pnpm adds node_modules/.bin to PATH
+    # for you locally, but nothing does that here since prisma is invoked directly.
+    command: sh -c "export PATH=\"/app/node_modules/.bin:$$PATH\" && prisma migrate deploy && prisma db seed"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: 'no'
+    networks:
+      - stock-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stockapp-app
+    env_file:
+      - .env
+    environment:
+      # Overrides the .env value (meant for `pnpm dev` on the host, which
+      # points at localhost): inside the compose network the DB is reachable
+      # at the `db` service name, not localhost.
+      DATABASE_URL: postgresql://${POSTGRES_USER:-stockuser}:${POSTGRES_PASSWORD:-stockpass}@db:5432/${POSTGRES_DB:-stockdb}?schema=public
+    ports:
+      - '3000:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    networks:
+      - stock-network
+
+networks:
+  stock-network:
+    name: stock-network
 
 volumes:
   postgres_data:
+    name: postgres_data

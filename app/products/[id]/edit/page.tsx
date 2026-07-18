@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { updateProduct } from '@/app/products/actions'
+import { PageHeader } from '@/components/page-header'
 import { ProductForm } from '@/components/product-form'
 import { prisma } from '@/lib/prisma'
 
@@ -17,13 +18,10 @@ export default async function EditProductPage({ params }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">แก้ไขสินค้า</h1>
-        <p className="text-muted-foreground text-sm">
-          คงเหลือปัจจุบัน {product.quantity} {product.unit} —
-          ปรับยอดผ่านหน้ารับ/เบิก
-        </p>
-      </div>
+      <PageHeader
+        title="แก้ไขสินค้า"
+        subtitle={`คงเหลือปัจจุบัน ${product.quantity} ${product.unit} — ปรับยอดผ่านหน้ารับ/เบิก`}
+      />
       <ProductForm
         action={updateProduct.bind(null, product.id)}
         submitLabel="บันทึกการแก้ไข"

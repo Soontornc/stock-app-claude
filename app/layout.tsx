@@ -1,16 +1,19 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import Link from 'next/link'
+import { Anuphan, Inter } from 'next/font/google'
+import Script from 'next/script'
+import { AppShell } from '@/components/app-shell'
+import { prisma } from '@/lib/prisma'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
 })
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+const anuphan = Anuphan({
+  variable: '--font-anuphan',
+  subsets: ['thai', 'latin'],
+  weight: ['300', '400', '500', '600', '700'],
 })
 
 export const metadata: Metadata = {
@@ -18,43 +21,38 @@ export const metadata: Metadata = {
   description: 'ระบบคลังสินค้าเบิกจ่ายสำหรับใช้งานภายในองค์กร',
 }
 
-const navLinks = [
-  { href: '/', label: 'Dashboard' },
-  { href: '/products', label: 'สินค้า' },
-]
+// Low-stock count must reflect live inventory on every request, so this
+// layout can't be statically prerendered (it would also fail at build time
+// with no reachable DB, e.g. inside a Docker build stage).
+export const dynamic = 'force-dynamic'
 
-export default function RootLayout({
+const noFlashScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const products = await prisma.product.findMany({
+    select: { quantity: true, reorderPoint: true },
+  })
+  const lowStockCount = products.filter(
+    (p) => p.quantity <= p.reorderPoint,
+  ).length
+
   return (
     <html
       lang="th"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${anuphan.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col">
-        <header className="border-b">
-          <nav className="mx-auto flex max-w-6xl items-center gap-6 px-6 py-4">
-            <Link href="/" className="font-semibold">
-              StockApp
-            </Link>
-            <div className="text-muted-foreground flex gap-4 text-sm">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="hover:text-foreground transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </nav>
-        </header>
-        <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">
-          {children}
-        </main>
+      <head>
+        <Script id="no-flash-theme" strategy="beforeInteractive">
+          {noFlashScript}
+        </Script>
+      </head>
+      <body className="flex h-full min-h-screen flex-col">
+        <AppShell lowStockCount={lowStockCount}>{children}</AppShell>
       </body>
     </html>
   )

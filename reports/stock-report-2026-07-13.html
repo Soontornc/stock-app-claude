@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<title>รายงานสถานะสต็อก — 2026-07-13</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Tahoma", "Leelawadee UI", "Noto Sans Thai", Arial, sans-serif;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 0;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 3px solid #1a1a1a;
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-size: 22px;
+    margin: 0;
+  }
+  .date {
+    font-size: 13px;
+    color: #555;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 7px 10px;
+    text-align: left;
+  }
+  th {
+    background: #f2f2f2;
+    font-weight: 600;
+  }
+  td.num { text-align: right; }
+  tr.low { background: #fff8e1; }
+  tr.out { background: #fdecea; }
+  .status-ok { color: #2e7d32; font-weight: 600; }
+  .status-low { color: #e65100; font-weight: 600; }
+  .status-out { color: #c62828; font-weight: 600; }
+  .summary {
+    margin-top: 22px;
+    border-top: 2px solid #1a1a1a;
+    padding-top: 14px;
+  }
+  .summary h2 {
+    font-size: 15px;
+    margin: 0 0 8px 0;
+  }
+  .summary ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .footer {
+    position: fixed;
+    bottom: 10mm;
+    left: 16mm;
+    right: 16mm;
+    font-size: 10px;
+    color: #999;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>รายงานสถานะสต็อก</h1>
+  <div class="date">วันที่ 2026-07-13</div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>SKU</th>
+      <th>ชื่อสินค้า</th>
+      <th class="num">คงเหลือ</th>
+      <th class="num">จุดสั่งซื้อ</th>
+      <th>สถานะ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SKU-1001</td><td>ปากกาลูกลื่น สีน้ำเงิน</td><td class="num">500</td><td class="num">100</td>
+      <td class="status-ok">ปกติ</td>
+    </tr>
+    <tr class="low">
+      <td>SKU-1002</td><td>สมุดโน้ต A5</td><td class="num">80</td><td class="num">100</td>
+      <td class="status-low">⚠️ ใกล้หมด</td>
+    </tr>
+    <tr>
+      <td>SKU-1003</td><td>กระดาษถ่ายเอกสาร A4 (รีม)</td><td class="num">40</td><td class="num">20</td>
+      <td class="status-ok">ปกติ</td>
+    </tr>
+    <tr class="out">
+      <td>SKU-1004</td><td>หมึกพิมพ์ HP 680 ดำ</td><td class="num">0</td><td class="num">5</td>
+      <td class="status-out">🔴 หมดแล้ว</td>
+    </tr>
+    <tr>
+      <td>SKU-1005</td><td>กาวแท่ง</td><td class="num">200</td><td class="num">50</td>
+      <td class="status-ok">ปกติ</td>
+    </tr>
+    <tr class="low">
+      <td>SKU-1006</td><td>เทปใส 1 นิ้ว</td><td class="num">15</td><td class="num">30</td>
+      <td class="status-low">⚠️ ใกล้หมด</td>
+    </tr>
+    <tr>
+      <td>SKU-1007</td><td>แฟ้มเอกสาร 2 ห่วง</td><td class="num">120</td><td class="num">40</td>
+      <td class="status-ok">ปกติ</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="summary">
+  <h2>สรุป</h2>
+  <ul>
+    <li>จำนวนสินค้าทั้งหมด: 7 รายการ</li>
+    <li>ใกล้หมด: 2 รายการ (SKU-1002, SKU-1006)</li>
+    <li>หมดแล้ว: 1 รายการ (SKU-1004)</li>
+    <li>ต้องสั่งซื้อเพิ่ม: SKU-1002, SKU-1004, SKU-1006</li>
+  </ul>
+</div>
+
+<div class="footer">StockApp — รายงานสถานะสต็อกอัตโนมัติ</div>
+
+</body>
+</html>

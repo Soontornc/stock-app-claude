@@ -1,9 +1,9 @@
 'use client'
 
+import { Search } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTransition } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 
 type Props = {
   categories: string[]
@@ -15,7 +15,7 @@ export function ProductsFilter({ categories, q, category }: Props) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const [pending, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
 
   function setParam(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString())
@@ -35,38 +35,40 @@ export function ProductsFilter({ categories, q, category }: Props) {
     setParam('q', String(formData.get('q') ?? '').trim())
   }
 
+  const chips = ['ทั้งหมด', ...categories]
+
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <form onSubmit={handleSearch} className="flex gap-2">
-        <Input
+      <form onSubmit={handleSearch} className="relative w-full max-w-[280px]">
+        <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+        <input
           name="q"
           defaultValue={q}
-          placeholder="ค้นหา SKU หรือชื่อสินค้า"
-          className="w-64"
+          placeholder="ค้นหาชื่อสินค้าหรือ SKU"
+          className="border-border bg-card focus-visible:border-ring w-full rounded-xl border py-2 pr-3 pl-9 text-[13.5px] outline-none"
         />
-        <Button type="submit" variant="outline" disabled={pending}>
-          ค้นหา
-        </Button>
       </form>
 
-      <select
-        aria-label="กรองตามหมวดหมู่"
-        value={category || 'all'}
-        onChange={(event) =>
-          setParam(
-            'category',
-            event.target.value === 'all' ? '' : event.target.value,
+      <div className="flex flex-wrap gap-2">
+        {chips.map((c) => {
+          const active = c === 'ทั้งหมด' ? category === '' : category === c
+          return (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setParam('category', c === 'ทั้งหมด' ? '' : c)}
+              className={cn(
+                'rounded-full border px-3.5 py-1.5 text-[12.5px] font-medium transition-colors',
+                active
+                  ? 'bg-primary border-primary font-bold text-white'
+                  : 'border-border bg-card text-muted-foreground hover:border-primary/40',
+              )}
+            >
+              {c}
+            </button>
           )
-        }
-        className="border-input focus-visible:border-ring focus-visible:ring-ring/50 h-8 rounded-lg border bg-transparent px-2.5 text-sm outline-none focus-visible:ring-3"
-      >
-        <option value="all">ทุกหมวดหมู่</option>
-        {categories.map((item) => (
-          <option key={item} value={item}>
-            {item}
-          </option>
-        ))}
-      </select>
+        })}
+      </div>
     </div>
   )
 }

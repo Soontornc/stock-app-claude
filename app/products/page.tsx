@@ -1,5 +1,7 @@
+import { Plus } from 'lucide-react'
 import Link from 'next/link'
 import { DeleteProductButton } from '@/components/delete-product-button'
+import { PageHeader } from '@/components/page-header'
 import { ProductsFilter } from '@/components/products-filter'
 import { StockBadge } from '@/components/stock-badge'
 import { buttonVariants } from '@/components/ui/button'
@@ -13,6 +15,7 @@ import {
 } from '@/components/ui/table'
 import { Prisma } from '@/lib/generated/prisma/client'
 import { prisma } from '@/lib/prisma'
+import { EditRowButton } from '@/components/edit-row-button'
 
 const priceFormatter = new Intl.NumberFormat('th-TH', {
   minimumFractionDigits: 2,
@@ -54,39 +57,40 @@ export default async function ProductsPage({ searchParams }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">สินค้าทั้งหมด</h1>
-          <p className="text-muted-foreground text-sm">
-            {products.length} รายการ{isFiltered ? ' (กรองแล้ว)' : ''}
-          </p>
-        </div>
-        <Link href="/products/new" className={buttonVariants()}>
-          + เพิ่มสินค้า
-        </Link>
-      </div>
+      <PageHeader
+        title="จัดการสินค้า"
+        subtitle={`${products.length} รายการ${isFiltered ? ' (กรองแล้ว)' : ''}`}
+        actions={
+          <Link
+            href="/products/new"
+            className={buttonVariants({ className: 'gap-1.5' })}
+          >
+            <Plus className="size-4" />
+            เพิ่มสินค้า
+          </Link>
+        }
+      />
 
       <ProductsFilter categories={categories} q={q} category={category} />
 
-      <div className="rounded-lg border">
+      <div className="border-border bg-card overflow-hidden rounded-2xl border">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>SKU</TableHead>
               <TableHead>ชื่อสินค้า</TableHead>
-              <TableHead>หมวดหมู่</TableHead>
               <TableHead className="text-right">คงเหลือ</TableHead>
               <TableHead className="text-right">จุดสั่งซื้อ</TableHead>
-              <TableHead>สถานะ</TableHead>
-              <TableHead className="text-right">ราคา/หน่วย</TableHead>
-              <TableHead className="text-right">จัดการ</TableHead>
+              <TableHead className="text-right">มูลค่ารวม</TableHead>
+              <TableHead className="text-right">สถานะ</TableHead>
+              <TableHead className="text-center">จัดการ</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {products.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={8}
+                  colSpan={7}
                   className="text-muted-foreground py-10 text-center"
                 >
                   {isFiltered
@@ -97,35 +101,43 @@ export default async function ProductsPage({ searchParams }: Props) {
             ) : (
               products.map((product) => (
                 <TableRow key={product.id}>
-                  <TableCell className="font-medium">{product.sku}</TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.category}</TableCell>
+                  <TableCell className="text-muted-foreground font-mono text-xs">
+                    {product.sku}
+                  </TableCell>
+                  <TableCell>
+                    <div className="font-semibold">{product.name}</div>
+                    <div className="text-muted-foreground text-xs">
+                      {product.category}
+                    </div>
+                  </TableCell>
                   <TableCell className="text-right">
                     {product.quantity} {product.unit}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-muted-foreground text-right">
                     {product.reorderPoint}
                   </TableCell>
+                  <TableCell className="text-right">
+                    ฿
+                    {priceFormatter.format(
+                      product.quantity * Number(product.price),
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end">
+                      <StockBadge
+                        quantity={product.quantity}
+                        reorderPoint={product.reorderPoint}
+                      />
+                    </div>
+                  </TableCell>
                   <TableCell>
-                    <StockBadge
-                      quantity={product.quantity}
-                      reorderPoint={product.reorderPoint}
-                    />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {priceFormatter.format(Number(product.price))}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Link
-                      href={`/products/${product.id}/edit`}
-                      className={buttonVariants({
-                        variant: 'ghost',
-                        size: 'sm',
-                      })}
-                    >
-                      แก้ไข
-                    </Link>
-                    <DeleteProductButton id={product.id} name={product.name} />
+                    <div className="flex justify-center gap-1.5">
+                      <EditRowButton href={`/products/${product.id}/edit`} />
+                      <DeleteProductButton
+                        id={product.id}
+                        name={product.name}
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))

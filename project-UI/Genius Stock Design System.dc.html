@@ -1,0 +1,967 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="./support.js"></script>
+  </head>
+  <body>
+    <x-dc>
+      <helmet>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+          rel="stylesheet"
+        />
+        <style>
+          @keyframes spin {
+            to {
+              transform: rotate(360deg);
+            }
+          }
+          body {
+            margin: 0;
+          }
+        </style>
+      </helmet>
+
+      <div
+        style="
+          width: 1240px;
+          margin: 0 auto;
+          background: #f7f5f0;
+          font-family: 'Inter', 'Anuphan', sans-serif;
+          color: #1f2a28;
+          padding-bottom: 80px;
+        "
+      >
+        <!-- COVER -->
+        <div
+          style="
+            background: linear-gradient(
+              150deg,
+              #0f9497 0%,
+              #01787b 55%,
+              #01474a 100%
+            );
+            padding: 56px 64px 48px;
+            position: relative;
+            overflow: hidden;
+          "
+        >
+          <div
+            style="
+              position: absolute;
+              right: -60px;
+              top: -70px;
+              width: 300px;
+              height: 300px;
+              border-radius: 50%;
+              background: rgba(255, 255, 255, 0.07);
+            "
+          ></div>
+          <div
+            style="
+              position: absolute;
+              right: 130px;
+              bottom: -100px;
+              width: 220px;
+              height: 220px;
+              border-radius: 50%;
+              background: rgba(242, 153, 74, 0.16);
+            "
+          ></div>
+          <div
+            style="
+              position: relative;
+              z-index: 1;
+              display: flex;
+              align-items: center;
+              gap: 16px;
+              margin-bottom: 30px;
+            "
+          >
+            <div
+              style="
+                background: rgba(255, 255, 255, 0.97);
+                border-radius: 20px;
+                padding: 12px;
+                box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              {{ logoMark }}
+            </div>
+            <div>
+              <div
+                style="
+                  color: rgba(255, 255, 255, 0.65);
+                  font-size: 13px;
+                  letter-spacing: 0.18em;
+                  font-weight: 600;
+                "
+              >
+                DESIGN SYSTEM
+              </div>
+              <div
+                style="
+                  color: #fff;
+                  font-size: 15px;
+                  letter-spacing: 0.04em;
+                  margin-top: 3px;
+                "
+              >
+                GENIUS STOCK · ระบบคงคลังสินค้า
+              </div>
+            </div>
+          </div>
+          <h1
+            style="
+              color: #fff;
+              font-size: 46px;
+              font-weight: 800;
+              letter-spacing: -0.02em;
+              margin: 0 0 12px;
+              line-height: 1.1;
+            "
+          >
+            Genius Stock Design System
+          </h1>
+          <p
+            style="
+              color: rgba(255, 255, 255, 0.8);
+              font-size: 17px;
+              margin: 0 0 28px;
+              max-width: 640px;
+              line-height: 1.55;
+            "
+          >
+            คู่มือระบบดีไซน์ — สี ฟอนต์ ไอคอน ปุ่ม ฟอร์ม และส่วนประกอบ UI
+            ทั้งหมด สำหรับระบบคลังสินค้าเบิกจ่ายภายในองค์กร
+          </p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap">
+            {{ coverChips }}
+          </div>
+        </div>
+
+        <div style="padding: 0 64px">
+          <!-- 01 COLORS -->
+          <div style="padding: 52px 0 0">
+            <div
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 14px;
+                margin-bottom: 6px;
+              "
+            >
+              <span
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 11px;
+                  background: #01787b;
+                  color: #fff;
+                  font-size: 14px;
+                  font-weight: 700;
+                "
+                >01</span
+              >
+              <h2
+                style="
+                  font-size: 28px;
+                  font-weight: 800;
+                  margin: 0;
+                  letter-spacing: -0.01em;
+                "
+              >
+                สีในระบบ — Color Palette
+              </h2>
+            </div>
+            <p
+              style="
+                color: #8b948f;
+                font-size: 14px;
+                margin: 0 0 24px;
+                padding-left: 48px;
+              "
+            >
+              สีแบรนด์ Genius Stock (Teal) · สีเน้นอุ่น (Amber) ·
+              โทนกลางแบบอบอุ่น และชุดสีสำหรับ Dark Mode
+            </p>
+            {{ colorsBlock }}
+          </div>
+
+          <!-- 02 TYPOGRAPHY -->
+          <div style="padding: 52px 0 0">
+            <div
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 14px;
+                margin-bottom: 6px;
+              "
+            >
+              <span
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 11px;
+                  background: #01787b;
+                  color: #fff;
+                  font-size: 14px;
+                  font-weight: 700;
+                "
+                >02</span
+              >
+              <h2
+                style="
+                  font-size: 28px;
+                  font-weight: 800;
+                  margin: 0;
+                  letter-spacing: -0.01em;
+                "
+              >
+                ตัวอักษร — Typography
+              </h2>
+            </div>
+            <p
+              style="
+                color: #8b948f;
+                font-size: 14px;
+                margin: 0 0 24px;
+                padding-left: 48px;
+              "
+            >
+              Inter สำหรับภาษาอังกฤษและตัวเลข · Anuphan สำหรับภาษาไทย
+            </p>
+            {{ typeBlock }}
+          </div>
+
+          <!-- 03 ICONS -->
+          <div style="padding: 52px 0 0">
+            <div
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 14px;
+                margin-bottom: 6px;
+              "
+            >
+              <span
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 11px;
+                  background: #01787b;
+                  color: #fff;
+                  font-size: 14px;
+                  font-weight: 700;
+                "
+                >03</span
+              >
+              <h2
+                style="
+                  font-size: 28px;
+                  font-weight: 800;
+                  margin: 0;
+                  letter-spacing: -0.01em;
+                "
+              >
+                ไอคอน — Icon Library
+              </h2>
+            </div>
+            <p
+              style="
+                color: #8b948f;
+                font-size: 14px;
+                margin: 0 0 24px;
+                padding-left: 48px;
+              "
+            >
+              Hugeicons · Stroke Rounded (แพ็กเกจฟรี) · viewBox 24×24 · stroke
+              1.8 · ปรับสี/ขนาดได้
+            </p>
+            {{ iconsBlock }}
+          </div>
+
+          <!-- 04 BUTTONS -->
+          <div style="padding: 52px 0 0">
+            <div
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 14px;
+                margin-bottom: 6px;
+              "
+            >
+              <span
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 11px;
+                  background: #01787b;
+                  color: #fff;
+                  font-size: 14px;
+                  font-weight: 700;
+                "
+                >04</span
+              >
+              <h2
+                style="
+                  font-size: 28px;
+                  font-weight: 800;
+                  margin: 0;
+                  letter-spacing: -0.01em;
+                "
+              >
+                ปุ่ม — Buttons
+              </h2>
+            </div>
+            <p
+              style="
+                color: #8b948f;
+                font-size: 14px;
+                margin: 0 0 24px;
+                padding-left: 48px;
+              "
+            >
+              ปุ่มหลัก ปุ่มรอง ปุ่มทำลาย และปุ่มไอคอน
+            </p>
+            {{ buttonsBlock }}
+          </div>
+
+          <!-- 05 FORMS -->
+          <div style="padding: 52px 0 0">
+            <div
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 14px;
+                margin-bottom: 6px;
+              "
+            >
+              <span
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 11px;
+                  background: #01787b;
+                  color: #fff;
+                  font-size: 14px;
+                  font-weight: 700;
+                "
+                >05</span
+              >
+              <h2
+                style="
+                  font-size: 28px;
+                  font-weight: 800;
+                  margin: 0;
+                  letter-spacing: -0.01em;
+                "
+              >
+                ฟอร์ม — Inputs &amp; Controls
+              </h2>
+            </div>
+            <p
+              style="
+                color: #8b948f;
+                font-size: 14px;
+                margin: 0 0 24px;
+                padding-left: 48px;
+              "
+            >
+              ช่องกรอกข้อมูล สวิตช์ segmented control และ filter chips
+            </p>
+            {{ formsBlock }}
+          </div>
+
+          <!-- 06 SURFACES -->
+          <div style="padding: 52px 0 0">
+            <div
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 14px;
+                margin-bottom: 6px;
+              "
+            >
+              <span
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 11px;
+                  background: #01787b;
+                  color: #fff;
+                  font-size: 14px;
+                  font-weight: 700;
+                "
+                >06</span
+              >
+              <h2
+                style="
+                  font-size: 28px;
+                  font-weight: 800;
+                  margin: 0;
+                  letter-spacing: -0.01em;
+                "
+              >
+                การ์ด &amp; สถานะ — Cards, Badges
+              </h2>
+            </div>
+            <p
+              style="
+                color: #8b948f;
+                font-size: 14px;
+                margin: 0 0 24px;
+                padding-left: 48px;
+              "
+            >
+              การ์ดสรุป แถวรายการสินค้า และ status badge สำหรับสถานะสต็อก
+            </p>
+            {{ surfacesBlock }}
+          </div>
+
+          <!-- 07 NAV -->
+          <div style="padding: 52px 0 0">
+            <div
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 14px;
+                margin-bottom: 6px;
+              "
+            >
+              <span
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 11px;
+                  background: #01787b;
+                  color: #fff;
+                  font-size: 14px;
+                  font-weight: 700;
+                "
+                >07</span
+              >
+              <h2
+                style="
+                  font-size: 28px;
+                  font-weight: 800;
+                  margin: 0;
+                  letter-spacing: -0.01em;
+                "
+              >
+                แถบเมนู — Sidebar Navigation
+              </h2>
+            </div>
+            <p
+              style="
+                color: #8b948f;
+                font-size: 14px;
+                margin: 0 0 24px;
+                padding-left: 48px;
+              "
+            >
+              สถานะปกติ, hover, active ของเมนูด้านข้าง
+            </p>
+            {{ navBlock }}
+          </div>
+
+          <!-- 08 TOKENS -->
+          <div style="padding: 52px 0 0">
+            <div
+              style="
+                display: flex;
+                align-items: baseline;
+                gap: 14px;
+                margin-bottom: 6px;
+              "
+            >
+              <span
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  justify-content: center;
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 11px;
+                  background: #01787b;
+                  color: #fff;
+                  font-size: 14px;
+                  font-weight: 700;
+                "
+                >08</span
+              >
+              <h2
+                style="
+                  font-size: 28px;
+                  font-weight: 800;
+                  margin: 0;
+                  letter-spacing: -0.01em;
+                "
+              >
+                โทเคน — Radius, Elevation, Spacing
+              </h2>
+            </div>
+            <p
+              style="
+                color: #8b948f;
+                font-size: 14px;
+                margin: 0 0 24px;
+                padding-left: 48px;
+              "
+            >
+              ค่ามาตรฐานของมุมโค้ง เงา และระยะห่าง (โทนโค้งมน อบอุ่น)
+            </p>
+            {{ tokensBlock }}
+          </div>
+
+          <!-- FOOTER -->
+          <div
+            style="
+              margin-top: 60px;
+              padding: 28px 0;
+              border-top: 1px solid #e4e1d8;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              color: #8b948f;
+              font-size: 13px;
+            "
+          >
+            <span>Genius Stock · Design System v1.0</span>
+            <span>ระบบคงคลังสินค้าเบิกจ่ายภายในองค์กร</span>
+          </div>
+        </div>
+      </div>
+    </x-dc>
+    <script type="text/x-dc" data-dc-script>
+      class Component extends DCLogic {
+        C = {
+          pri:'#01787B', priLt:'#14969B', priDk:'#014F51', priXLt:'#E3F2F1',
+          amb:'#F2994A', ambBg:'#FDECDA', ambTx:'#8A4A0E',
+          bg:'#F7F5F0', card:'#FFFFFF', border:'#E4E1D8',
+          txDk:'#1F2A28', txMd:'#55625F', txSb:'#8B948F',
+          aGr:'#1B8354', aBg:'#DCF5E7', aTx:'#14532D',
+          pGr:'#C9820A', pBg:'#FDF1D9', pTx:'#7A4E06',
+          lRd:'#D8433A', lBg:'#FBE3E1', lTx:'#8A241D',
+          cyBg:'#E4F0FC', cyTx:'#1D4E82', cyFg:'#2C6FBB',
+        };
+        mono = "'JetBrains Mono',monospace";
+
+        ic(name, size, color, sw, key) {
+          const h = React.createElement;
+          size = size || 24; color = color || 'currentColor'; sw = sw || 1.8;
+          const P = {
+            grid: [["rect",{"x":"3","y":"3","width":"8","height":"8","rx":"2.5"}],["rect",{"x":"13","y":"3","width":"8","height":"8","rx":"2.5"}],["rect",{"x":"3","y":"13","width":"8","height":"8","rx":"2.5"}],["rect",{"x":"13","y":"13","width":"8","height":"8","rx":"2.5"}]],
+            box: [["path",{"d":"M3.5 8.5L12 4L20.5 8.5L12 13L3.5 8.5Z"}],["path",{"d":"M3.5 8.5V16.5L12 21L20.5 16.5V8.5"}],["path",{"d":"M12 13V21"}]],
+            arrowInBox: [["path",{"d":"M12 3V13"}],["path",{"d":"M8.5 9.5L12 13L15.5 9.5"}],["path",{"d":"M4 14V16.5C4 18.6421 4 19.7132 4.66603 20.3766C5.33206 21.0401 6.40214 21.0401 8.54229 21.0401H15.4577C17.5979 21.0401 18.6679 21.0401 19.334 20.3766C20 19.7132 20 18.6421 20 16.5V14"}]],
+            arrowOutBox: [["path",{"d":"M12 13V3"}],["path",{"d":"M8.5 6.5L12 3L15.5 6.5"}],["path",{"d":"M4 14V16.5C4 18.6421 4 19.7132 4.66603 20.3766C5.33206 21.0401 6.40214 21.0401 8.54229 21.0401H15.4577C17.5979 21.0401 18.6679 21.0401 19.334 20.3766C20 19.7132 20 18.6421 20 16.5V14"}]],
+            alertTri: [["path",{"d":"M12 9V13.2"}],["path",{"d":"M10.9 3.7L2.7 18.1C2.1 19.1 2.8 20.5 4 20.5H20C21.2 20.5 21.9 19.1 21.3 18.1L13.1 3.7C12.5 2.7 11.5 2.7 10.9 3.7Z"}],["path",{"d":"M12 16.4H12.01"}]],
+            chartBar: [["path",{"d":"M4 20V11"}],["path",{"d":"M12 20V4"}],["path",{"d":"M20 20V14"}],["path",{"d":"M3 20H21"}]],
+            users: [["path",{"d":"M14 8.5C14 10.433 12.433 12 10.5 12C8.567 12 7 10.433 7 8.5C7 6.567 8.567 5 10.5 5C12.433 5 14 6.567 14 8.5Z"}],["path",{"d":"M2.5 19C2.5 15.5 6 13.5 10.5 13.5C15 13.5 18.5 15.5 18.5 19"}],["path",{"d":"M16.5 6C17.9 6.3 19 7.6 19 9C19 10.4 17.9 11.7 16.5 12"}],["path",{"d":"M18.5 13.8C20.6 14.3 21.9 15.6 21.9 17.5"}]],
+            gear: [["path",{"d":"M12 15.2C13.7673 15.2 15.2 13.7673 15.2 12C15.2 10.2327 13.7673 8.8 12 8.8C10.2327 8.8 8.8 10.2327 8.8 12C8.8 13.7673 10.2327 15.2 12 15.2Z"}],["path",{"d":"M20 12.5V11.5C20 10.9 19.5 10.4 18.9 10.3L17.7 10.1C17.5 9.5 17.3 9 17 8.5L17.7 7.5C18 7 18 6.4 17.5 6L16.9 5.4C16.5 5 15.9 4.9 15.4 5.2L14.4 5.9C13.9 5.6 13.4 5.4 12.8 5.2L12.6 4C12.5 3.4 12 3 11.4 3H10.4C9.8 3 9.3 3.4 9.2 4L9 5.2C8.4 5.4 7.9 5.6 7.4 5.9L6.4 5.2C5.9 4.9 5.3 5 4.9 5.4L4.3 6C3.9 6.4 3.8 7 4.1 7.5L4.8 8.5C4.5 9 4.3 9.5 4.1 10.1L2.9 10.3C2.3 10.4 1.9 10.9 1.9 11.5V12.5C1.9 13.1 2.3 13.6 2.9 13.7L4.1 13.9C4.3 14.5 4.5 15 4.8 15.5L4.1 16.5C3.8 17 3.9 17.6 4.3 18L4.9 18.6C5.3 19 5.9 19.1 6.4 18.8L7.4 18.1C7.9 18.4 8.4 18.6 9 18.8L9.2 20C9.3 20.6 9.8 21 10.4 21H11.4C12 21 12.5 20.6 12.6 20L12.8 18.8C13.4 18.6 13.9 18.4 14.4 18.1L15.4 18.8C15.9 19.1 16.5 19 16.9 18.6L17.5 18C17.9 17.6 18 17 17.7 16.5L17 15.5C17.3 15 17.5 14.5 17.7 13.9L18.9 13.7C19.5 13.6 20 13.1 20 12.5Z"}]],
+            trash: [["path",{"d":"M3 6.5H21"}],["path",{"d":"M8.5 6.5V4.5C8.5 3.7 9.2 3 10 3H14C14.8 3 15.5 3.7 15.5 4.5V6.5"}],["path",{"d":"M18.5 6.5L17.8 18.4C17.7 19.9 16.5 21 15 21H9C7.5 21 6.3 19.9 6.2 18.4L5.5 6.5"}],["path",{"d":"M10 10.5V17"}],["path",{"d":"M14 10.5V17"}]],
+            filter: [["path",{"d":"M3.5 5.5H20.5"}],["path",{"d":"M6.5 12H17.5"}],["path",{"d":"M10 18.5H14"}]],
+            download: [["path",{"d":"M12 3V16"}],["path",{"d":"M7 11L12 16L17 11"}],["path",{"d":"M4 20.5H20"}]],
+            home: [["path",{"d":"M3 11.9896V14.5C3 17.7998 3 19.4497 4.02513 20.4749C5.05025 21.5 6.70017 21.5 10 21.5H14C17.2998 21.5 18.9497 21.5 19.9749 20.4749C21 19.4497 21 17.7998 21 14.5V11.9896C21 10.3083 21 9.46773 20.6441 8.74005C20.2882 8.01237 19.6247 7.49628 18.2976 6.46411L16.2976 4.90855C14.2331 3.30285 13.2009 2.5 12 2.5C10.7991 2.5 9.76689 3.30285 7.70242 4.90855L5.70241 6.46411C4.37533 7.49628 3.71179 8.01237 3.3559 8.74005C3 9.46773 3 10.3083 3 11.9896Z"}]],
+            doc: [["path",{"d":"M8 7L16 7"}],["path",{"d":"M8 11L12 11"}],["path",{"d":"M13 21.5V21C13 18.1716 13 16.7574 13.8787 15.8787C14.7574 15 16.1716 15 19 15H19.5M20 13.3431V10C20 6.22876 20 4.34315 18.8284 3.17157C17.6569 2 15.7712 2 12 2C8.22877 2 6.34315 2 5.17157 3.17157C4 4.34314 4 6.22876 4 10L4 14.5442C4 17.7892 4 19.4117 4.88607 20.5107C5.06508 20.7327 5.26731 20.9349 5.48933 21.1139C6.58831 22 8.21082 22 11.4558 22C12.1614 22 12.5141 22 12.8372 21.886C12.9044 21.8623 12.9702 21.835 13.0345 21.8043C13.3436 21.6564 13.593 21.407 14.0919 20.9081L18.8284 16.1716C19.4065 15.5935 19.6955 15.3045 19.8478 14.9369C20 14.5694 20 14.1606 20 13.3431Z"}]],
+            user: [["path",{"d":"M17 8.5C17 5.73858 14.7614 3.5 12 3.5C9.23858 3.5 7 5.73858 7 8.5C7 11.2614 9.23858 13.5 12 13.5C14.7614 13.5 17 11.2614 17 8.5Z"}],["path",{"d":"M19 20.5C19 16.634 15.866 13.5 12 13.5C8.13401 13.5 5 16.634 5 20.5"}]],
+            lock: [["path",{"d":"M12 16.5V14.5"}],["path",{"d":"M4.2678 18.8447C4.49268 20.515 5.87612 21.8235 7.55965 21.9009C8.97627 21.966 10.4153 22 12 22C13.5847 22 15.0237 21.966 16.4403 21.9009C18.1239 21.8235 19.5073 20.515 19.7322 18.8447C19.8789 17.7547 20 16.6376 20 15.5C20 14.3624 19.8789 13.2453 19.7322 12.1553C19.5073 10.485 18.1239 9.17649 16.4403 9.09909C15.0237 9.03397 13.5847 9 12 9C10.4153 9 8.97627 9.03397 7.55965 9.09909C5.87612 9.17649 4.49268 10.485 4.2678 12.1553C4.12104 13.2453 3.99999 14.3624 3.99999 15.5C3.99999 16.6376 4.12104 17.7547 4.2678 18.8447Z"}],["path",{"d":"M7.5 9V6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5V9"}]],
+            eye: [["path",{"d":"M21.544 11.045C21.848 11.4713 22 11.6845 22 12C22 12.3155 21.848 12.5287 21.544 12.955C20.1779 14.8706 16.6892 19 12 19C7.31078 19 3.8221 14.8706 2.45604 12.955C2.15201 12.5287 2 12.3155 2 12C2 11.6845 2.15201 11.4713 2.45604 11.045C3.8221 9.12944 7.31078 5 12 5C16.6892 5 20.1779 9.12944 21.544 11.045Z"}],["path",{"d":"M15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15C13.6569 15 15 13.6569 15 12Z"}]],
+            eyeOff: [["path",{"d":"M22 8C22 8 18 14 12 14C6 14 2 8 2 8"}],["path",{"d":"M15 13.5L16.5 16"}],["path",{"d":"M20 11L22 13"}],["path",{"d":"M2 13L4 11"}],["path",{"d":"M9 13.5L7.5 16"}]],
+            bell: [["path",{"d":"M20 18.5011L18.349 7.93407C17.8603 4.80601 15.166 2.5 12 2.5C8.83398 2.5 6.13971 4.80601 5.65098 7.93407L4 18.5011"}],["path",{"d":"M20 18.5C20 16.8431 16.4183 15.5 12 15.5C7.58172 15.5 4 16.8431 4 18.5C4 20.1569 7.58172 21.5 12 21.5C16.4183 21.5 20 20.1569 20 18.5Z"}],["path",{"d":"M13 18.5H11"}]],
+            search: [["path",{"d":"M17 17L21 21"}],["path",{"d":"M19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19C15.4183 19 19 15.4183 19 11Z"}]],
+            mail: [["path",{"d":"M2 6L8.91302 9.91697C11.4616 11.361 12.5384 11.361 15.087 9.91697L22 6"}],["path",{"d":"M2.01577 13.4756C2.08114 16.5412 2.11383 18.0739 3.24496 19.2094C4.37608 20.3448 5.95033 20.3843 9.09883 20.4634C11.0393 20.5122 12.9607 20.5122 14.9012 20.4634C18.0497 20.3843 19.6239 20.3448 20.7551 19.2094C21.8862 18.0739 21.9189 16.5412 21.9842 13.4756C22.0053 12.4899 22.0053 11.5101 21.9842 10.5244C21.9189 7.45886 21.8862 5.92609 20.7551 4.79066C19.6239 3.65523 18.0497 3.61568 14.9012 3.53657C12.9607 3.48781 11.0393 3.48781 9.09882 3.53656C5.95033 3.61566 4.37608 3.65521 3.24495 4.79065C2.11382 5.92608 2.08114 7.45885 2.01576 10.5244C1.99474 11.5101 1.99475 12.4899 2.01577 13.4756Z"}]],
+            checkCircle: [["path",{"d":"M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"}],["path",{"d":"M8 12.5L10.5 15L16 9"}]],
+            xCircle: [["path",{"d":"M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"}],["path",{"d":"M14.9994 15L9 9M9.00064 15L15 9"}]],
+            chevronL: [["path",{"d":"M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"}]],
+            chevronR: [["path",{"d":"M9.00005 6C9.00005 6 15 10.4189 15 12C15 13.5812 9 18 9 18"}]],
+            login: [["path",{"d":"M6 18C6 18.4644 6 18.6965 6.022 18.8918C6.20482 20.5145 7.48545 21.7952 9.10814 21.978C9.30345 22 9.53562 22 9.99998 22H13C16.2998 22 17.9497 22 18.9749 20.9749C20 19.9498 20 18.2998 20 15L20 8.99998C20 5.70016 20 4.05024 18.9748 3.02512C17.9497 2 16.2998 2 13 2H9.99998C9.53563 2 9.30345 2 9.10814 2.02201C7.48545 2.20483 6.20482 3.48547 6.022 5.10816C6 5.30347 6 5.53565 6 6"}],["path",{"d":"M4.07612 11.1183C4 11.3021 4 11.535 4 12.001C4 12.4669 4 12.6999 4.07612 12.8837C4.17761 13.1287 4.37229 13.3234 4.61732 13.4249C4.80109 13.501 5.03406 13.501 5.5 13.501H10.5C10.5002 15.2503 10.511 16.1299 11.0623 16.3858C11.0829 16.3954 11.1037 16.4042 11.1249 16.4124C11.7045 16.6353 12.3999 16.0139 13.7907 14.7711C15.2576 13.4602 15.9912 12.7851 16 11.957C15.9912 11.1289 15.2576 10.4538 13.7907 9.14301C12.3999 7.90018 11.7045 7.27876 11.1249 7.50171C11.1037 7.50985 11.0829 7.51869 11.0623 7.52822C10.5018 7.78844 10.5 8.69318 10.5 10.501H5.5C5.03406 10.501 4.80109 10.501 4.61732 10.5771C4.37229 10.6786 4.17761 10.8733 4.07612 11.1183Z"}]],
+            logout: [["path",{"d":"M18 18C18 18.4644 18 18.6965 17.978 18.8918C17.7952 20.5145 16.5145 21.7952 14.8919 21.978C14.6965 22 14.4644 22 14 22H11C7.70017 22 6.05025 22 5.02513 20.9749C4 19.9498 4 18.2998 4 15L4.00001 8.99998C4.00001 5.70016 4.00003 4.05024 5.02514 3.02512C6.05027 2 7.70018 2 11 2H14C14.4644 2 14.6965 2 14.8919 2.02201C16.5145 2.20483 17.7952 3.48547 17.978 5.10816C18 5.30347 18 5.53565 18 6"}],["path",{"d":"M8.07612 11.1183C8 11.3021 8 11.535 8 12.001C8 12.4669 8 12.6999 8.07612 12.8837C8.17761 13.1287 8.37229 13.3234 8.61732 13.4249C8.80109 13.501 9.03406 13.501 9.5 13.501H14.5C14.5002 15.2503 14.511 16.1299 15.0623 16.3858C15.0829 16.3954 15.1037 16.4042 15.1249 16.4124C15.7045 16.6353 16.3999 16.0139 17.7907 14.7711C19.2576 13.4602 19.9912 12.7851 20 11.957C19.9912 11.1289 19.2576 10.4538 17.7907 9.14301C16.3999 7.90018 15.7045 7.27876 15.1249 7.50171C15.1037 7.50985 15.0829 7.51869 15.0623 7.52822C14.5018 7.78844 14.5 8.69318 14.5 10.501H9.5C9.03406 10.501 8.80109 10.501 8.61732 10.5771C8.37229 10.6786 8.17761 10.8733 8.07612 11.1183Z"}]],
+            plus: [["path",{"d":"M12.001 5.00003V19.002"}],["path",{"d":"M19.002 12.002L4.99998 12.002"}]],
+            edit: [["path",{"d":"M14.0737 3.88545C14.8189 3.07808 15.1915 2.6744 15.5874 2.43893C16.5427 1.87076 17.7191 1.85309 18.6904 2.39232C19.0929 2.6158 19.4769 3.00812 20.245 3.79276C21.0131 4.5774 21.3972 4.96972 21.6159 5.38093C22.1438 6.37312 22.1265 7.57479 21.5703 8.5507C21.3398 8.95516 20.9446 9.33578 20.1543 10.097L10.7506 19.1543C9.25288 20.5969 8.504 21.3182 7.56806 21.6837C6.63212 22.0493 5.6032 22.0224 3.54536 21.9686L3.26538 21.9613C2.63891 21.9449 2.32567 21.9367 2.14359 21.73C1.9615 21.5234 1.98636 21.2043 2.03608 20.5662L2.06308 20.2197C2.20301 18.4235 2.27297 17.5255 2.62371 16.7182C2.97444 15.9109 3.57944 15.2555 4.78943 13.9445L14.0737 3.88545Z"}],["path",{"d":"M13 4L20 11"}],["path",{"d":"M14 22L22 22"}]],
+            calendar: [["path",{"d":"M16 2V6M8 2V6"}],["path",{"d":"M13 4H11C7.22876 4 5.34315 4 4.17157 5.17157C3 6.34315 3 8.22876 3 12V14C3 17.7712 3 19.6569 4.17157 20.8284C5.34315 22 7.22876 22 11 22H13C16.7712 22 18.6569 22 19.8284 20.8284C21 19.6569 21 17.7712 21 14V12C21 8.22876 21 6.34315 19.8284 5.17157C18.6569 4 16.7712 4 13 4Z"}],["path",{"d":"M3 10H21"}]],
+            sun: [["path",{"d":"M17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12Z"}],["path",{"d":"M12 2V3.5M12 20.5V22M19.0708 19.0713L18.0101 18.0106M5.98926 5.98926L4.9286 4.9286M22 12H20.5M3.5 12H2M19.0713 4.92871L18.0106 5.98937M5.98975 18.0107L4.92909 19.0714"}]],
+            moon: [["path",{"d":"M21.5 14.0784C20.3003 14.7189 18.9301 15.0821 17.4751 15.0821C12.7491 15.0821 8.91792 11.2509 8.91792 6.52485C8.91792 5.06986 9.28105 3.69968 9.92163 2.5C5.66765 3.49698 2.5 7.31513 2.5 11.8731C2.5 17.1899 6.8101 21.5 12.1269 21.5C16.6849 21.5 20.503 18.3324 21.5 14.0784Z"}]],
+          };
+          return h('svg', {key:key, viewBox:'0 0 24 24', width:size, height:size, fill:'none', stroke:color, strokeWidth:sw, strokeLinecap:'round', strokeLinejoin:'round', style:{display:'block',flexShrink:0}},
+            ...(P[name]||[]).map((p,i) => h(p[0], {key:i, ...p[1]})));
+        }
+        get iconNames(){ return ['grid','box','arrowInBox','arrowOutBox','alertTri','chartBar','users','gear','trash','filter','download','home','doc','user','lock','eye','eyeOff','bell','search','mail','checkCircle','xCircle','chevronL','chevronR','login','logout','plus','edit','calendar','sun','moon']; }
+        get HUGE(){ return {grid:'DashboardSquare01',box:'PackageOpen',arrowInBox:'Login03',arrowOutBox:'Logout03',alertTri:'Alert02',chartBar:'ChartBarLine',users:'UserGroup',gear:'Settings02',trash:'Delete02',filter:'FilterHorizontal',download:'Download04',home:'Home03',doc:'File01',user:'User',lock:'SquareLock02',eye:'View',eyeOff:'ViewOff',bell:'Notification03',search:'Search01',mail:'Mail01',checkCircle:'CheckmarkCircle02',xCircle:'CancelCircle',chevronL:'ArrowLeft01',chevronR:'ArrowRight01',login:'Login03',logout:'Logout03',plus:'Add01',edit:'Edit02',calendar:'Calendar03',sun:'Sun03',moon:'Moon02'}; }
+
+        logoMark(size){
+          const h=React.createElement; size=size||48;
+          return h('div',{style:{width:size,height:size,borderRadius:size*0.32,background:'linear-gradient(150deg,#14969B,#01787B)',display:'flex',alignItems:'center',justifyContent:'center'}},this.ic('box',size*0.56,'#fff',1.9));
+        }
+
+        card(children, pad){ const h=React.createElement; return h('div',{style:{background:this.C.card,borderRadius:18,padding:pad||24,boxShadow:'0 2px 14px rgba(1,120,123,0.07)',border:'1px solid rgba(1,120,123,0.05)'}}, children); }
+        subTitle(t){ const h=React.createElement; return h('div',{style:{fontSize:13,fontWeight:700,color:this.C.txMd,marginBottom:14,letterSpacing:'0.04em',textTransform:'uppercase'}}, t); }
+        codePill(t){ const h=React.createElement; return h('span',{style:{fontFamily:this.mono,fontSize:11,color:this.C.txMd,background:this.C.bg,borderRadius:7,padding:'2px 7px'}}, t); }
+
+        renderCoverChips(){
+          const h=React.createElement;
+          const items=[['2','สีแบรนด์'],['2','Font Family'],['31','ไอคอน'],['6','ปุ่ม'],['8','ส่วนประกอบ']];
+          return items.map((it,i)=>h('div',{key:i,style:{display:'flex',alignItems:'baseline',gap:7,background:'rgba(255,255,255,0.13)',border:'1px solid rgba(255,255,255,0.2)',borderRadius:20,padding:'8px 16px'}},
+            h('span',{style:{color:'#fff',fontSize:17,fontWeight:700}},it[0]),
+            h('span',{style:{color:'rgba(255,255,255,0.78)',fontSize:13}},it[1])));
+        }
+
+        /* ─── 01 COLORS ─── */
+        swatch(hex, name, role){
+          const h=React.createElement; const C=this.C;
+          const light = ['#FFFFFF','#F7F5F0','#DCF5E7','#FDF1D9','#FBE3E1','#E4F0FC','#E3F2F1','#FDECDA','#E4E1D8'].includes(hex.toUpperCase());
+          return h('div',{key:hex+name,style:{borderRadius:14,overflow:'hidden',border:`1px solid ${C.border}`,background:C.card}},
+            h('div',{style:{height:84,background:hex,borderBottom:light?`1px solid ${C.border}`:'none'}}),
+            h('div',{style:{padding:'10px 12px'}},
+              h('div',{style:{fontSize:13,fontWeight:700,color:C.txDk,marginBottom:2}},name),
+              h('div',{style:{fontSize:11,color:C.txSb,marginBottom:6}},role),
+              h('span',{style:{fontFamily:this.mono,fontSize:11.5,color:C.txMd,letterSpacing:'0.02em'}},hex)));
+        }
+        swatchGrid(items, cols){
+          const h=React.createElement;
+          return h('div',{style:{display:'grid',gridTemplateColumns:`repeat(${cols||5},1fr)`,gap:12}}, items.map(it=>this.swatch(it[0],it[1],it[2])));
+        }
+        renderColors(){
+          const h=React.createElement; const C=this.C;
+          return h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+            this.card([
+              this.subTitle('Brand · สีแบรนด์'),
+              this.swatchGrid([
+                ['#01787B','Primary','ปุ่มหลัก ลิงก์ แอคทีฟ'],
+                ['#14969B','Primary Light','hover ไล่เฉด'],
+                ['#014F51','Primary Dark','กด active เงา'],
+                ['#F2994A','Accent Amber','ไฮไลต์ จุดเด่น'],
+                ['#E3F2F1','Primary Tint','พื้นหลังอ่อน active'],
+              ],5)
+            ]),
+            this.card([
+              this.subTitle('Surface & Neutral · พื้นผิวและโทนกลาง (อบอุ่น)'),
+              this.swatchGrid([
+                ['#F7F5F0','Background','พื้นหลังหน้าจอ'],
+                ['#FFFFFF','Card / Surface','การ์ด พื้นผิว'],
+                ['#E4E1D8','Border','เส้นขอบ เส้นคั่น'],
+                ['#1F2A28','Text Dark','หัวข้อ ข้อความหลัก'],
+                ['#55625F','Text Medium','ข้อความรอง'],
+                ['#8B948F','Text Subtle','คำอธิบาย caption'],
+              ],6)
+            ]),
+            this.card([
+              this.subTitle('Semantic · สีตามความหมาย (สถานะสต็อก)'),
+              h('div',{style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14}},
+                ...[
+                  ['Success · ปกติ','#1B8354','#DCF5E7','#14532D','สต็อกเพียงพอ'],
+                  ['Warning · ใกล้หมด','#C9820A','#FDF1D9','#7A4E06','คงเหลือ ≤ จุดสั่งซื้อ'],
+                  ['Error · หมดสต็อก','#D8433A','#FBE3E1','#8A241D','คงเหลือ = 0'],
+                  ['Info · แจ้งเตือน','#2C6FBB','#E4F0FC','#1D4E82','ข้อความทั่วไป'],
+                ].map((s,i)=>h('div',{key:i,style:{borderRadius:14,border:`1px solid ${C.border}`,overflow:'hidden',background:C.card}},
+                  h('div',{style:{background:s[2],padding:'14px 14px 12px'}},
+                    h('span',{style:{display:'inline-flex',alignItems:'center',gap:6,background:s[2],color:s[3],fontSize:11,fontWeight:700,padding:'4px 11px',borderRadius:20,border:`1px solid ${s[1]}33`}},
+                      h('span',{style:{width:7,height:7,borderRadius:'50%',background:s[1],display:'block'}}), 'Badge')),
+                  h('div',{style:{padding:'10px 13px'}},
+                    h('div',{style:{fontSize:12.5,fontWeight:700,color:C.txDk,marginBottom:6}},s[0]),
+                    h('div',{style:{fontSize:11,color:C.txSb,marginBottom:8}},s[4]),
+                    h('div',{style:{display:'flex',gap:5,flexWrap:'wrap'}}, [['fg',s[1]],['bg',s[2]],['tx',s[3]]].map((p,j)=>h('span',{key:j,style:{fontFamily:this.mono,fontSize:10,color:C.txMd,background:C.bg,borderRadius:5,padding:'2px 6px'}},p[1]))))))
+              )
+            ]),
+            this.card([
+              this.subTitle('Dark Mode · ชุดสีโหมดมืด'),
+              h('div',{style:{background:'#0E1716',borderRadius:14,padding:18}},
+                h('div',{style:{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:12}},
+                  ...[
+                    ['#23A5A8','Primary'],['#0E1716','Background'],['#16211F','Card'],['#26332F','Border'],['#EAF3F1','Text Dark'],['#7C9490','Text Subtle'],
+                  ].map((s,i)=>h('div',{key:i},
+                    h('div',{style:{height:56,background:s[0],borderRadius:10,border:'1px solid rgba(255,255,255,0.08)'}}),
+                    h('div',{style:{fontSize:11.5,fontWeight:600,color:'#EAF3F1',marginTop:7}},s[1]),
+                    h('div',{style:{fontFamily:this.mono,fontSize:10.5,color:'#7C9490',marginTop:1}},s[0])))))
+            ])
+          );
+        }
+
+        /* ─── 02 TYPOGRAPHY ─── */
+        renderType(){
+          const h=React.createElement; const C=this.C;
+          const scale=[
+            ['Display','30','800','ยอดมูลค่าสต็อก','฿906,430'],
+            ['Title L','24','800','หัวข้อหน้า · Auth header','เข้าสู่ระบบ'],
+            ['Title','20','700','หัวข้อ Page','ภาพรวมคลังสินค้า'],
+            ['Section','13','700','หัวข้อกลุ่ม','รายการสินค้าในคลัง'],
+            ['Row Title','14','700','ชื่อสินค้าในตาราง','น้ำดื่ม 600ml (ลัง)'],
+            ['Body','14','400','เนื้อหาทั่วไป','กรอกอีเมลและรหัสผ่านเพื่อเข้าใช้งาน'],
+            ['Label','13','600','ป้ายกำกับ field','อีเมล'],
+            ['Caption','12','400','คำอธิบาย SKU','SKU-1001'],
+            ['Micro','11','700','ป้าย badge','ใกล้หมด'],
+          ];
+          return h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+            h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:18}},
+              this.card([
+                h('div',{style:{display:'flex',alignItems:'baseline',justifyContent:'space-between',marginBottom:14}},
+                  h('span',{style:{fontSize:64,fontWeight:700,fontFamily:"'Inter',sans-serif",color:C.pri,lineHeight:1}},'Aa'),
+                  this.codePill('Inter')),
+                h('div',{style:{fontSize:15,fontWeight:700,color:C.txDk,marginBottom:4}},'Inter'),
+                h('div',{style:{fontSize:12.5,color:C.txSb,marginBottom:12,lineHeight:1.5}},'ภาษาอังกฤษและตัวเลขทั้งหมด · จำนวน ราคา SKU วันที่'),
+                h('div',{style:{fontFamily:"'Inter',sans-serif",fontSize:19,color:C.txMd,letterSpacing:'0.01em'}},'฿ 0123456789 SKU-1001'),
+                h('div',{style:{display:'flex',gap:6,marginTop:12,flexWrap:'wrap'}},['400','500','600','700','800'].map(w=>h('span',{key:w,style:{fontFamily:"'Inter'",fontWeight:Number(w),fontSize:13,color:C.txDk,background:C.bg,borderRadius:7,padding:'4px 10px'}},w)))
+              ]),
+              this.card([
+                h('div',{style:{display:'flex',alignItems:'baseline',justifyContent:'space-between',marginBottom:14}},
+                  h('span',{style:{fontSize:64,fontWeight:700,fontFamily:"'Anuphan',sans-serif",color:C.pri,lineHeight:1}},'กข'),
+                  this.codePill('Anuphan')),
+                h('div',{style:{fontSize:15,fontWeight:700,color:C.txDk,marginBottom:4}},'Anuphan'),
+                h('div',{style:{fontSize:12.5,color:C.txSb,marginBottom:12,lineHeight:1.5}},'ภาษาไทยทั้งหมด · อ่านง่าย โค้งมน เหมาะกับ UI แดชบอร์ด'),
+                h('div',{style:{fontFamily:"'Anuphan',sans-serif",fontSize:19,color:C.txMd}},'จัดการคลังสินค้าอย่างชาญฉลาด'),
+                h('div',{style:{display:'flex',gap:6,marginTop:12,flexWrap:'wrap'}},['300','400','500','600','700'].map(w=>h('span',{key:w,style:{fontFamily:"'Anuphan'",fontWeight:Number(w),fontSize:13,color:C.txDk,background:C.bg,borderRadius:7,padding:'4px 10px'}},w)))
+              ])
+            ),
+            this.card([
+              this.subTitle('Type Scale · ลำดับขนาด'),
+              h('div',{style:{display:'flex',flexDirection:'column'}},
+                ...scale.map((r,i)=>h('div',{key:i,style:{display:'flex',alignItems:'center',gap:20,padding:'13px 0',borderBottom:i<scale.length-1?`1px solid ${C.border}`:'none'}},
+                  h('div',{style:{width:90,flexShrink:0}}, h('div',{style:{fontSize:12.5,fontWeight:700,color:C.txDk}},r[0]), h('span',{style:{fontFamily:this.mono,fontSize:11,color:C.txSb}},r[1]+'px · '+r[2])),
+                  h('div',{style:{flex:1,fontSize:Number(r[1]),fontWeight:Number(r[2]),color:C.txDk,fontFamily:"'Inter','Anuphan',sans-serif",lineHeight:1.2,overflow:'hidden',whiteSpace:'nowrap',textOverflow:'ellipsis'}},r[4]),
+                  h('div',{style:{width:220,flexShrink:0,fontSize:11.5,color:C.txSb,textAlign:'right'}},r[3]))))
+            ])
+          );
+        }
+
+        /* ─── 03 ICONS ─── */
+        renderIcons(){
+          const h=React.createElement; const C=this.C; const HUGE=this.HUGE;
+          return h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+            this.card([
+              h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16,flexWrap:'wrap',gap:10}},
+                h('div',{style:{display:'flex',alignItems:'center',gap:9}},
+                  h('span',{style:{width:9,height:9,borderRadius:'50%',background:'#F2994A',display:'block'}}),
+                  h('span',{style:{fontSize:13,fontWeight:700,color:C.txDk}},'@hugeicons/core-free-icons'),
+                  h('span',{style:{fontSize:12,color:C.txSb}},'· Stroke Rounded · 31 ไอคอนที่ใช้')),
+                h('span',{style:{fontFamily:this.mono,fontSize:11,color:C.txMd,background:C.bg,borderRadius:8,padding:'4px 10px'}},'24×24 · stroke 1.8')),
+              h('div',{style:{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:10}},
+                ...this.iconNames.map(n=>h('div',{key:n,style:{display:'flex',flexDirection:'column',alignItems:'center',gap:7,padding:'14px 4px 10px',borderRadius:12,background:C.bg,border:`1px solid ${C.border}`}},
+                  this.ic(n,26,C.pri,1.8),
+                  h('span',{style:{fontFamily:this.mono,fontSize:10,fontWeight:600,color:C.txDk,textAlign:'center',wordBreak:'break-word',lineHeight:1.25}},HUGE[n]||n),
+                  h('span',{style:{fontSize:9,color:C.txSb,textAlign:'center'}},n))))
+            ]),
+            h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:18}},
+              this.card([
+                this.subTitle('Sizes · ขนาดที่ใช้'),
+                h('div',{style:{display:'flex',alignItems:'flex-end',gap:26,padding:'4px 0'}},
+                  ...[['14','badge'],['18','inline'],['20','list'],['22','nav'],['26','tile'],['34','feature']].map((s,i)=>h('div',{key:i,style:{display:'flex',flexDirection:'column',alignItems:'center',gap:8}},
+                    this.ic('box',Number(s[0]),C.pri,1.8),
+                    h('span',{style:{fontSize:11,color:C.txDk,fontWeight:600}},s[0]+'px'),
+                    h('span',{style:{fontSize:10,color:C.txSb}},s[1]))))
+              ]),
+              this.card([
+                this.subTitle('Color Use · การใช้สีกับไอคอน'),
+                h('div',{style:{display:'flex',gap:14,flexWrap:'wrap'}},
+                  ...[['Primary',C.pri,C.priXLt],['Success',C.aGr,C.aBg],['Warning',C.pGr,C.pBg],['Error',C.lRd,C.lBg],['On gradient','#fff',C.pri]].map((s,i)=>h('div',{key:i,style:{display:'flex',alignItems:'center',gap:10}},
+                    h('div',{style:{width:44,height:44,borderRadius:12,background:s[2],display:'flex',alignItems:'center',justifyContent:'center'}},this.ic('box',22,s[1],1.8)),
+                    h('span',{style:{fontSize:12,color:C.txMd,fontWeight:600}},s[0]))))
+              ])
+            )
+          );
+        }
+
+        /* ─── 04 BUTTONS ─── */
+        btnSpec(label, el, code){
+          const h=React.createElement; const C=this.C;
+          return h('div',{style:{display:'flex',flexDirection:'column',gap:10}},
+            h('div',{style:{fontSize:12,fontWeight:700,color:C.txMd}},label),
+            h('div',{style:{display:'flex',alignItems:'center',minHeight:50}},el),
+            code?h('span',{style:{fontFamily:this.mono,fontSize:10.5,color:C.txSb,lineHeight:1.4}},code):null);
+        }
+        renderButtons(){
+          const h=React.createElement; const C=this.C; const bf="'Inter','Anuphan',sans-serif";
+          const primary=h('button',{style:{background:C.pri,color:'#fff',border:'none',borderRadius:12,padding:'13px 24px',fontSize:14.5,fontWeight:700,cursor:'pointer',fontFamily:bf,display:'flex',alignItems:'center',gap:9,boxShadow:'0 4px 16px rgba(1,120,123,0.28)'}},'เข้าสู่ระบบ');
+          const loading=h('button',{style:{background:'rgba(1,120,123,0.5)',color:'#fff',border:'none',borderRadius:12,padding:'13px 24px',fontSize:14.5,fontWeight:700,fontFamily:bf,display:'flex',alignItems:'center',gap:10}},h('div',{style:{width:18,height:18,border:'2px solid rgba(255,255,255,0.3)',borderTopColor:'#fff',borderRadius:'50%',animation:'spin 0.7s linear infinite'}}),'กำลังบันทึก...');
+          const secondary=h('button',{style:{background:C.card,color:C.pri,border:`1.5px solid ${C.pri}`,borderRadius:12,padding:'12px 22px',fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:bf,display:'flex',alignItems:'center',gap:7}},'จัดการสินค้า');
+          const ghost=h('button',{style:{background:'transparent',color:C.txMd,border:`1.5px solid ${C.border}`,borderRadius:12,padding:'12px 22px',fontSize:14,fontWeight:600,cursor:'pointer',fontFamily:bf}},'ยกเลิก');
+          const danger=h('button',{style:{background:C.lBg,color:C.lRd,border:'none',borderRadius:12,padding:'12px 22px',fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:bf,display:'flex',alignItems:'center',gap:8}},this.ic('trash',17,C.lRd,2),'ลบสินค้า');
+          const amber=h('button',{style:{background:C.amb,color:'#fff',border:'none',borderRadius:12,padding:'12px 22px',fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:bf,display:'flex',alignItems:'center',gap:8}},this.ic('alertTri',17,'#fff',2),'ดูรายการใกล้หมด');
+          return h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+            this.card([
+              this.subTitle('Primary & Secondary'),
+              h('div',{style:{display:'flex',gap:40,flexWrap:'wrap',rowGap:24}},
+                this.btnSpec('Primary · ปุ่มหลัก',primary,'bg pri · radius 12 · 700'),
+                this.btnSpec('Loading · กำลังโหลด',loading,'opacity 0.5 + spinner'),
+                this.btnSpec('Secondary · ปุ่มรอง',secondary,'outline 1.5px · pri'),
+                this.btnSpec('Ghost · ปุ่มยกเลิก',ghost,'border เท่านั้น'),
+                this.btnSpec('Destructive · ทำลาย',danger,'bg #FBE3E1 · text #D8433A'),
+                this.btnSpec('Amber CTA · เตือน',amber,'bg amber · white text'))
+            ]),
+            this.card([
+              this.subTitle('Icon & Pill Buttons'),
+              h('div',{style:{display:'flex',gap:40,flexWrap:'wrap',rowGap:20,alignItems:'flex-start'}},
+                this.btnSpec('Icon button',h('div',{style:{position:'relative',width:40,height:40,borderRadius:12,background:C.priXLt,display:'flex',alignItems:'center',justifyContent:'center'}},this.ic('bell',19,C.pri,1.9)),'40px · radius 12'),
+                this.btnSpec('Add · เพิ่มสินค้า',h('button',{style:{background:C.pri,color:'#fff',border:'none',borderRadius:12,padding:'11px 18px',display:'flex',alignItems:'center',gap:7,fontWeight:700,fontSize:13.5,fontFamily:bf,cursor:'pointer'}},this.ic('plus',16,'#fff',2.2),'เพิ่มสินค้า'),'icon + label'),
+                this.btnSpec('Row action',h('div',{style:{display:'flex',gap:6}},h('button',{style:{background:C.priXLt,border:'none',borderRadius:9,width:32,height:32,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}},this.ic('edit',15,C.pri,2)),h('button',{style:{background:C.lBg,border:'none',borderRadius:9,width:32,height:32,display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer'}},this.ic('trash',15,C.lRd,2))),'32px square'))
+            ])
+          );
+        }
+
+        /* ─── 05 FORMS ─── */
+        renderForms(){
+          const h=React.createElement; const C=this.C; const bf="'Inter','Anuphan',sans-serif";
+          const field=(icon,label,val,err)=>h('div',{},
+            h('div',{style:{fontSize:13,fontWeight:600,color:C.txDk,marginBottom:6}},label),
+            h('div',{style:{background:C.card,border:`1.5px solid ${err?C.lRd:C.border}`,borderRadius:12,padding:'11px 14px',display:'flex',alignItems:'center',gap:8}},
+              icon?this.ic(icon,18,C.txSb):null,
+              h('span',{style:{flex:1,fontSize:14.5,color:val?C.txDk:C.txSb,fontFamily:bf}},val||'พิมพ์ข้อความ...')),
+            err?h('div',{style:{fontSize:11,color:C.lRd,marginTop:5,display:'flex',alignItems:'center',gap:5}},this.ic('xCircle',13,C.lRd,2),'SKU นี้มีอยู่แล้วในระบบ'):null);
+          const chip=(label,active)=>h('span',{style:{background:active?C.pri:C.card,color:active?'#fff':C.txMd,border:`1.5px solid ${active?C.pri:C.border}`,borderRadius:20,padding:'6px 15px',fontSize:12,fontWeight:active?700:400,fontFamily:bf}},label);
+          return h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+            h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:18}},
+              this.card([ this.subTitle('Text Input · ช่องกรอก'), h('div',{style:{display:'flex',flexDirection:'column',gap:16}}, field('mail','อีเมล','you@example.com',false), field(null,'SKU','',true)) ]),
+              this.card([
+                this.subTitle('Select & Textarea'),
+                h('div',{style:{display:'flex',flexDirection:'column',gap:16}},
+                  h('div',{},
+                    h('div',{style:{fontSize:13,fontWeight:600,color:C.txDk,marginBottom:6}},'เลือกสินค้า'),
+                    h('div',{style:{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:12,padding:'11px 14px',display:'flex',alignItems:'center',justifyContent:'space-between'}},
+                      h('span',{style:{fontSize:14.5,color:C.txDk,fontFamily:bf}},'SKU-1001 · น้ำดื่ม 600ml (ลัง)'),
+                      this.ic('chevronR',16,C.txSb,2))),
+                  h('div',{},
+                    h('div',{style:{fontSize:13,fontWeight:600,color:C.txDk,marginBottom:6}},'หมายเหตุ (ไม่บังคับ)'),
+                    h('div',{style:{background:C.card,border:`1.5px solid ${C.border}`,borderRadius:12,padding:'11px 14px',minHeight:56}},
+                      h('span',{style:{fontSize:14.5,color:C.txSb,fontFamily:bf}},'พิมพ์หมายเหตุ...'))))
+              ])
+            ),
+            this.card([
+              this.subTitle('Segmented & Filter Chips'),
+              h('div',{style:{display:'flex',alignItems:'center',gap:28,flexWrap:'wrap'}},
+                h('div',{style:{display:'flex',background:C.bg,borderRadius:20,padding:3}},
+                  h('span',{style:{fontSize:11,fontWeight:700,padding:'5px 13px',borderRadius:16,background:C.pri,color:'#fff'}},'รับเข้า'),
+                  h('span',{style:{fontSize:11,fontWeight:700,padding:'5px 13px',borderRadius:16,color:C.txSb}},'เบิกออก')),
+                h('div',{style:{display:'flex',gap:8}}, chip('ทั้งหมด',true), chip('ปกติ',false), chip('ใกล้หมด',false), chip('หมดสต็อก',false)))
+            ])
+          );
+        }
+
+        /* ─── 06 SURFACES & BADGES ─── */
+        badge(label,bg,tx,dot){
+          const h=React.createElement;
+          return h('span',{style:{display:'inline-flex',alignItems:'center',gap:6,background:bg,color:tx,fontSize:11,fontWeight:700,padding:'4px 12px',borderRadius:20}},dot?h('span',{style:{width:7,height:7,borderRadius:'50%',background:dot,display:'block'}}):null,label);
+        }
+        renderSurfaces(){
+          const h=React.createElement; const C=this.C;
+          const listRow=h('div',{style:{background:C.card,borderRadius:14,padding:'12px 14px',display:'flex',gap:12,alignItems:'center',boxShadow:'0 2px 8px rgba(1,120,123,0.06)',border:`1px solid ${C.border}`}},
+            h('div',{style:{width:40,height:40,borderRadius:11,flexShrink:0,background:C.priXLt,display:'flex',alignItems:'center',justifyContent:'center'}},this.ic('box',20,C.pri,1.8)),
+            h('div',{style:{flex:1,minWidth:0}},
+              h('div',{style:{fontSize:13,fontWeight:700,color:C.txDk,marginBottom:2}},'น้ำดื่ม 600ml (ลัง)'),
+              h('div',{style:{fontSize:11,color:C.txSb}},'SKU-1001 · คงเหลือ 428')),
+            this.badge('ปกติ',C.aBg,C.aTx,C.aGr));
+          const statCard=h('div',{style:{background:C.card,borderRadius:18,padding:20,border:`1px solid ${C.border}`,boxShadow:'0 2px 14px rgba(1,120,123,0.06)'}},
+            h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}},
+              h('div',{style:{width:38,height:38,borderRadius:11,background:C.priXLt,display:'flex',alignItems:'center',justifyContent:'center'}},this.ic('box',19,C.pri,1.8)),
+              h('span',{style:{fontSize:11,color:C.txSb,fontWeight:600}},'รวม')),
+            h('div',{style:{fontSize:12.5,color:C.txMd,marginBottom:4}},'สินค้าทั้งหมด'),
+            h('div',{style:{fontSize:26,fontWeight:800,color:C.txDk}},'7 รายการ'));
+          return h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+            h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:18,alignItems:'start'}},
+              this.card([ this.subTitle('Plain Card · การ์ดพื้นฐาน'), h('div',{style:{display:'flex',flexDirection:'column',gap:6}},h('div',{style:{fontSize:14,fontWeight:700,color:C.txDk}},'หัวข้อการ์ด'),h('div',{style:{fontSize:12.5,color:C.txMd,lineHeight:1.5}},'radius 14–18 · shadow 0 2px 14px rgba(1,120,123,0.06) · border 1px'),h('div',{style:{marginTop:8}},listRow)) ]),
+              this.card([ this.subTitle('Stat Card · การ์ดสรุปตัวเลข'), statCard ])
+            ),
+            this.card([
+              this.subTitle('Status Badges · ป้ายสถานะสต็อก'),
+              h('div',{style:{display:'flex',gap:10,flexWrap:'wrap'}},this.badge('ปกติ',C.aBg,C.aTx,C.aGr),this.badge('ใกล้หมด',C.pBg,C.pTx,C.pGr),this.badge('หมดสต็อก',C.lBg,C.lTx,C.lRd))
+            ])
+          );
+        }
+
+        /* ─── 07 NAV ─── */
+        renderNav(){
+          const h=React.createElement; const C=this.C;
+          const item=(icon,label,state)=>{
+            const active=state==='active', hover=state==='hover';
+            return h('div',{style:{display:'flex',alignItems:'center',gap:10,padding:'10px 14px',borderRadius:11,background:active?C.pri:(hover?'rgba(1,120,123,0.08)':'transparent'),cursor:'pointer'}},
+              this.ic(icon,18,active?'#fff':C.txMd,1.8),
+              h('span',{style:{fontSize:13.5,fontWeight:active?700:500,color:active?'#fff':C.txDk}},label));
+          };
+          return this.card([
+            this.subTitle('Sidebar Item States'),
+            h('div',{style:{display:'flex',gap:24,flexWrap:'wrap'}},
+              h('div',{style:{width:220,display:'flex',flexDirection:'column',gap:4}}, h('div',{style:{fontSize:11,color:C.txSb,marginBottom:6,fontWeight:600}},'ปกติ'), item('grid','ภาพรวม','default'), item('box','สินค้า','default')),
+              h('div',{style:{width:220,display:'flex',flexDirection:'column',gap:4}}, h('div',{style:{fontSize:11,color:C.txSb,marginBottom:6,fontWeight:600}},'Hover'), item('grid','ภาพรวม','hover'), item('box','สินค้า','default')),
+              h('div',{style:{width:220,display:'flex',flexDirection:'column',gap:4}}, h('div',{style:{fontSize:11,color:C.txSb,marginBottom:6,fontWeight:600}},'Active'), item('grid','ภาพรวม','active'), item('box','สินค้า','default')))
+          ]);
+        }
+
+        /* ─── 08 TOKENS ─── */
+        renderTokens(){
+          const h=React.createElement; const C=this.C;
+          const radii=[['10','chip / icon box'],['12','input / button'],['14','row card'],['18','card'],['20','badge / pill'],['26','sheet / hero']];
+          const shadows=[['Card','0 2px 14px rgba(1,120,123,0.06)'],['Elevated','0 8px 24px rgba(1,120,123,0.12)'],['Button','0 4px 16px rgba(1,120,123,0.28)'],['Modal','0 32px 80px rgba(0,0,0,0.35)']];
+          const spaces=[['4','xs'],['6','sm'],['8','base gap'],['12','gutter'],['16','card pad'],['20','section'],['28','block']];
+          return h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+            this.card([
+              this.subTitle('Border Radius · มุมโค้ง (โทนโค้งมน อบอุ่น)'),
+              h('div',{style:{display:'flex',gap:20,flexWrap:'wrap'}},
+                ...radii.map((r,i)=>h('div',{key:i,style:{display:'flex',flexDirection:'column',alignItems:'center',gap:8}},
+                  h('div',{style:{width:64,height:64,background:C.pri,borderRadius:Number(r[0])}}),
+                  h('span',{style:{fontFamily:this.mono,fontSize:12,fontWeight:600,color:C.txDk}},r[0]+'px'),
+                  h('span',{style:{fontSize:10.5,color:C.txSb}},r[1]))))
+            ]),
+            h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:18}},
+              this.card([
+                this.subTitle('Elevation · เงา'),
+                h('div',{style:{display:'flex',flexDirection:'column',gap:18,padding:'4px 0'}},
+                  ...shadows.map((s,i)=>h('div',{key:i,style:{display:'flex',alignItems:'center',gap:16}},
+                    h('div',{style:{width:54,height:38,background:C.card,borderRadius:10,boxShadow:s[1],flexShrink:0}}),
+                    h('div',{},h('div',{style:{fontSize:12.5,fontWeight:700,color:C.txDk}},s[0]),h('span',{style:{fontFamily:this.mono,fontSize:10,color:C.txSb}},s[1])))))
+              ]),
+              this.card([
+                this.subTitle('Spacing · ระยะห่าง'),
+                h('div',{style:{display:'flex',flexDirection:'column',gap:11,padding:'4px 0'}},
+                  ...spaces.map((s,i)=>h('div',{key:i,style:{display:'flex',alignItems:'center',gap:14}},
+                    h('div',{style:{width:Number(s[0])*2,height:14,background:C.amb,borderRadius:4,flexShrink:0}}),
+                    h('span',{style:{fontFamily:this.mono,fontSize:12,fontWeight:600,color:C.txDk,width:42}},s[0]+'px'),
+                    h('span',{style:{fontSize:11.5,color:C.txSb}},s[1]))))
+              ])
+            )
+          );
+        }
+
+        renderVals(){
+          return {
+            logoMark: this.logoMark(48),
+            coverChips: this.renderCoverChips(),
+            colorsBlock: this.renderColors(),
+            typeBlock: this.renderType(),
+            iconsBlock: this.renderIcons(),
+            buttonsBlock: this.renderButtons(),
+            formsBlock: this.renderForms(),
+            surfacesBlock: this.renderSurfaces(),
+            navBlock: this.renderNav(),
+            tokensBlock: this.renderTokens(),
+          };
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,26 +1,24 @@
-import { badgeVariants } from '@/components/ui/badge'
 import { getStockStatus, type StockStatus } from '@/lib/stock-status'
-import { cn } from '@/lib/utils'
 
 const styles: Record<StockStatus, { label: string; className: string }> = {
   out: {
     label: 'หมด',
-    className: badgeVariants({ variant: 'destructive' }),
+    className: 'bg-status-out-bg text-status-out-fg',
   },
   low: {
     label: 'ใกล้หมด',
-    className: cn(
-      badgeVariants({ variant: 'outline' }),
-      'border-transparent bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-400',
-    ),
+    className: 'bg-status-low-bg text-status-low-fg',
   },
   ok: {
     label: 'ปกติ',
-    className: cn(
-      badgeVariants({ variant: 'outline' }),
-      'border-transparent bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400',
-    ),
+    className: 'bg-status-ok-bg text-status-ok-fg',
   },
+}
+
+const dotColor: Record<StockStatus, string> = {
+  out: 'bg-status-out',
+  low: 'bg-status-low',
+  ok: 'bg-status-ok',
 }
 
 export function StockBadge({
@@ -32,5 +30,12 @@ export function StockBadge({
 }) {
   const status = getStockStatus(quantity, reorderPoint)
   const style = styles[status]
-  return <span className={style.className}>{style.label}</span>
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold whitespace-nowrap ${style.className}`}
+    >
+      <span className={`size-1.5 rounded-full ${dotColor[status]}`} />
+      {style.label}
+    </span>
+  )
 }

@@ -1,0 +1,607 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="./support.js"></script>
+  </head>
+  <body>
+    <x-dc>
+      <helmet>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+        <style>
+          @keyframes spin {
+            to {
+              transform: rotate(360deg);
+            }
+          }
+          body {
+            margin: 0;
+          }
+          ::placeholder {
+            color: inherit;
+            opacity: 1;
+          }
+        </style>
+      </helmet>
+      <div style="{{ rootStyle }}">{{ appTree }}</div>
+    </x-dc>
+    <script type="text/x-dc" data-dc-script>
+      class Component extends DCLogic {
+        state = {
+          page: 'login',
+          dark: false,
+          products: [
+            {id:'p1', sku:'SKU-1001', name:'น้ำดื่ม 600ml (ลัง)', category:'เครื่องดื่ม', unit:'ลัง', qty:428, reorderPoint:50, price:2000},
+            {id:'p2', sku:'SKU-1002', name:'กระดาษ A4 80 แกรม', category:'เครื่องเขียน', unit:'รีม', qty:38, reorderPoint:60, price:120},
+            {id:'p3', sku:'SKU-1003', name:'หมึกพิมพ์ HP 682 ดำ', category:'อุปกรณ์ IT', unit:'ตลับ', qty:0, reorderPoint:10, price:450},
+            {id:'p4', sku:'SKU-1004', name:'ถุงมือยาง (กล่อง)', category:'อุปกรณ์ทั่วไป', unit:'กล่อง', qty:156, reorderPoint:40, price:150},
+            {id:'p5', sku:'SKU-1005', name:'เจลแอลกอฮอล์ 5 ลิตร', category:'ของใช้', unit:'แกลลอน', qty:12, reorderPoint:20, price:600},
+            {id:'p6', sku:'SKU-1006', name:'กล่องพัสดุ เบอร์ C', category:'บรรจุภัณฑ์', unit:'ใบ', qty:890, reorderPoint:200, price:15},
+            {id:'p7', sku:'SKU-1007', name:'เทปกาวใส 2 นิ้ว', category:'บรรจุภัณฑ์', unit:'ม้วน', qty:64, reorderPoint:30, price:30},
+          ],
+          transactions: [
+            {id:'t1', type:'OUT', pid:'p7', qty:29, note:'เบิกแผนกบรรจุภัณฑ์', time:'11 ก.ค. 2569 14:00'},
+            {id:'t2', type:'OUT', pid:'p5', qty:8, note:'เบิกจุดล้างมือ ชั้น 1-4', time:'11 ก.ค. 2569 11:30'},
+            {id:'t3', type:'OUT', pid:'p4', qty:18, note:'เบิกแผนกสินค้า', time:'11 ก.ค. 2569 11:00'},
+            {id:'t4', type:'OUT', pid:'p1', qty:80, note:'เบิกห้องประชุมใหญ่วันนี้', time:'11 ก.ค. 2569 10:30'},
+            {id:'t5', type:'OUT', pid:'p2', qty:50, note:'เบิกผู้จัดการ สมชาย ใจดี, PO-2026-0312', time:'11 ก.ค. 2569 10:00'},
+            {id:'t6', type:'IN', pid:'p1', qty:200, note:'รับจากผู้จำหน่ายรอบเดือน', time:'10 ก.ค. 2569 09:15'},
+            {id:'t7', type:'IN', pid:'p6', qty:300, note:'รับสินค้าคลังใหม่', time:'9 ก.ค. 2569 15:40'},
+            {id:'t8', type:'OUT', pid:'p3', qty:5, note:'เบิกฝ่ายไอที', time:'8 ก.ค. 2569 13:20'},
+          ],
+          search: '',
+          categoryFilter: 'ทั้งหมด',
+          editingId: null,
+          formSku:'', formName:'', formCategory:'', formUnit:'', formQty:'', formReorder:'', formPrice:'', formError:'',
+          stockPid: 'p1', stockQty:'1', stockNote:'', stockError:'', stockSuccess:'',
+          txFilter: 'ทั้งหมด',
+          showPw: false,
+          viewportWidth: (typeof window!=='undefined' ? window.innerWidth : 1440),
+          mobileNavOpen: false,
+        };
+
+        componentDidMount(){
+          this._onResize = () => this.setState({viewportWidth: window.innerWidth});
+          window.addEventListener('resize', this._onResize);
+        }
+        componentWillUnmount(){
+          window.removeEventListener('resize', this._onResize);
+        }
+        isMobile(){ return this.state.viewportWidth < 760; }
+        isTablet(){ return this.state.viewportWidth >= 760 && this.state.viewportWidth < 1080; }
+        isCompact(){ return this.state.viewportWidth < 1080; }
+
+        C(){
+          return this.state.dark ? {
+            pageBg:'#0E1716', authPanelBg:'#0B1413', cardBg:'#16211F', border:'#26332F',
+            txDk:'#EAF3F1', txMd:'#A9BAB6', txSb:'#7C9490',
+            inputBg:'#16211F', sidebarBg:'#081312', sidebarHover:'rgba(255,255,255,0.06)',
+            pri:'#23A5A8', priTint:'rgba(35,165,168,0.16)', priDk:'#01474A',
+            amb:'#F2994A', ambBg:'rgba(242,153,74,0.16)', ambTx:'#F2AD6B',
+            aGr:'#3FBE84', aBg:'rgba(63,190,132,0.16)', aTx:'#7BDDB0',
+            lRd:'#F0685F', lBg:'rgba(240,104,95,0.16)', lTx:'#F5978F',
+            shadow:'0 2px 14px rgba(0,0,0,0.35)',
+          } : {
+            pageBg:'#F7F5F0', authPanelBg:'#F0EDE5', cardBg:'#FFFFFF', border:'#E4E1D8',
+            txDk:'#1F2A28', txMd:'#55625F', txSb:'#8B948F',
+            inputBg:'#FFFFFF', sidebarBg:'#082C2D', sidebarHover:'rgba(255,255,255,0.07)',
+            pri:'#01787B', priTint:'#E3F2F1', priDk:'#014F51',
+            amb:'#F2994A', ambBg:'#FDECDA', ambTx:'#8A4A0E',
+            aGr:'#1B8354', aBg:'#DCF5E7', aTx:'#14532D',
+            lRd:'#D8433A', lBg:'#FBE3E1', lTx:'#8A241D',
+            shadow:'0 2px 14px rgba(1,120,123,0.07)',
+          };
+        }
+        bf(){ return "'Inter','Anuphan',sans-serif"; }
+
+        ic(name, size, color, sw) {
+          const h = React.createElement;
+          size = size || 24; color = color || 'currentColor'; sw = sw || 1.8;
+          const P = {
+            grid: [["rect",{"x":"3","y":"3","width":"8","height":"8","rx":"2.5"}],["rect",{"x":"13","y":"3","width":"8","height":"8","rx":"2.5"}],["rect",{"x":"3","y":"13","width":"8","height":"8","rx":"2.5"}],["rect",{"x":"13","y":"13","width":"8","height":"8","rx":"2.5"}]],
+            box: [["path",{"d":"M3.5 8.5L12 4L20.5 8.5L12 13L3.5 8.5Z"}],["path",{"d":"M3.5 8.5V16.5L12 21L20.5 16.5V8.5"}],["path",{"d":"M12 13V21"}]],
+            arrowInBox: [["path",{"d":"M12 3V13"}],["path",{"d":"M8.5 9.5L12 13L15.5 9.5"}],["path",{"d":"M4 14V16.5C4 18.6421 4 19.7132 4.66603 20.3766C5.33206 21.0401 6.40214 21.0401 8.54229 21.0401H15.4577C17.5979 21.0401 18.6679 21.0401 19.334 20.3766C20 19.7132 20 18.6421 20 16.5V14"}]],
+            arrowOutBox: [["path",{"d":"M12 13V3"}],["path",{"d":"M8.5 6.5L12 3L15.5 6.5"}],["path",{"d":"M4 14V16.5C4 18.6421 4 19.7132 4.66603 20.3766C5.33206 21.0401 6.40214 21.0401 8.54229 21.0401H15.4577C17.5979 21.0401 18.6679 21.0401 19.334 20.3766C20 19.7132 20 18.6421 20 16.5V14"}]],
+            alertTri: [["path",{"d":"M12 9V13.2"}],["path",{"d":"M10.9 3.7L2.7 18.1C2.1 19.1 2.8 20.5 4 20.5H20C21.2 20.5 21.9 19.1 21.3 18.1L13.1 3.7C12.5 2.7 11.5 2.7 10.9 3.7Z"}],["path",{"d":"M12 16.4H12.01"}]],
+            chartBar: [["path",{"d":"M4 20V11"}],["path",{"d":"M12 20V4"}],["path",{"d":"M20 20V14"}],["path",{"d":"M3 20H21"}]],
+            users: [["path",{"d":"M14 8.5C14 10.433 12.433 12 10.5 12C8.567 12 7 10.433 7 8.5C7 6.567 8.567 5 10.5 5C12.433 5 14 6.567 14 8.5Z"}],["path",{"d":"M2.5 19C2.5 15.5 6 13.5 10.5 13.5C15 13.5 18.5 15.5 18.5 19"}],["path",{"d":"M16.5 6C17.9 6.3 19 7.6 19 9C19 10.4 17.9 11.7 16.5 12"}],["path",{"d":"M18.5 13.8C20.6 14.3 21.9 15.6 21.9 17.5"}]],
+            gear: [["path",{"d":"M12 15.2C13.7673 15.2 15.2 13.7673 15.2 12C15.2 10.2327 13.7673 8.8 12 8.8C10.2327 8.8 8.8 10.2327 8.8 12C8.8 13.7673 10.2327 15.2 12 15.2Z"}],["path",{"d":"M20 12.5V11.5C20 10.9 19.5 10.4 18.9 10.3L17.7 10.1C17.5 9.5 17.3 9 17 8.5L17.7 7.5C18 7 18 6.4 17.5 6L16.9 5.4C16.5 5 15.9 4.9 15.4 5.2L14.4 5.9C13.9 5.6 13.4 5.4 12.8 5.2L12.6 4C12.5 3.4 12 3 11.4 3H10.4C9.8 3 9.3 3.4 9.2 4L9 5.2C8.4 5.4 7.9 5.6 7.4 5.9L6.4 5.2C5.9 4.9 5.3 5 4.9 5.4L4.3 6C3.9 6.4 3.8 7 4.1 7.5L4.8 8.5C4.5 9 4.3 9.5 4.1 10.1L2.9 10.3C2.3 10.4 1.9 10.9 1.9 11.5V12.5C1.9 13.1 2.3 13.6 2.9 13.7L4.1 13.9C4.3 14.5 4.5 15 4.8 15.5L4.1 16.5C3.8 17 3.9 17.6 4.3 18L4.9 18.6C5.3 19 5.9 19.1 6.4 18.8L7.4 18.1C7.9 18.4 8.4 18.6 9 18.8L9.2 20C9.3 20.6 9.8 21 10.4 21H11.4C12 21 12.5 20.6 12.6 20L12.8 18.8C13.4 18.6 13.9 18.4 14.4 18.1L15.4 18.8C15.9 19.1 16.5 19 16.9 18.6L17.5 18C17.9 17.6 18 17 17.7 16.5L17 15.5C17.3 15 17.5 14.5 17.7 13.9L18.9 13.7C19.5 13.6 20 13.1 20 12.5Z"}]],
+            trash: [["path",{"d":"M3 6.5H21"}],["path",{"d":"M8.5 6.5V4.5C8.5 3.7 9.2 3 10 3H14C14.8 3 15.5 3.7 15.5 4.5V6.5"}],["path",{"d":"M18.5 6.5L17.8 18.4C17.7 19.9 16.5 21 15 21H9C7.5 21 6.3 19.9 6.2 18.4L5.5 6.5"}],["path",{"d":"M10 10.5V17"}],["path",{"d":"M14 10.5V17"}]],
+            filter: [["path",{"d":"M3.5 5.5H20.5"}],["path",{"d":"M6.5 12H17.5"}],["path",{"d":"M10 18.5H14"}]],
+            download: [["path",{"d":"M12 3V16"}],["path",{"d":"M7 11L12 16L17 11"}],["path",{"d":"M4 20.5H20"}]],
+            home: [["path",{"d":"M3 11.9896V14.5C3 17.7998 3 19.4497 4.02513 20.4749C5.05025 21.5 6.70017 21.5 10 21.5H14C17.2998 21.5 18.9497 21.5 19.9749 20.4749C21 19.4497 21 17.7998 21 14.5V11.9896C21 10.3083 21 9.46773 20.6441 8.74005C20.2882 8.01237 19.6247 7.49628 18.2976 6.46411L16.2976 4.90855C14.2331 3.30285 13.2009 2.5 12 2.5C10.7991 2.5 9.76689 3.30285 7.70242 4.90855L5.70241 6.46411C4.37533 7.49628 3.71179 8.01237 3.3559 8.74005C3 9.46773 3 10.3083 3 11.9896Z"}]],
+            doc: [["path",{"d":"M8 7L16 7"}],["path",{"d":"M8 11L12 11"}],["path",{"d":"M13 21.5V21C13 18.1716 13 16.7574 13.8787 15.8787C14.7574 15 16.1716 15 19 15H19.5M20 13.3431V10C20 6.22876 20 4.34315 18.8284 3.17157C17.6569 2 15.7712 2 12 2C8.22877 2 6.34315 2 5.17157 3.17157C4 4.34314 4 6.22876 4 10L4 14.5442C4 17.7892 4 19.4117 4.88607 20.5107C5.06508 20.7327 5.26731 20.9349 5.48933 21.1139C6.58831 22 8.21082 22 11.4558 22C12.1614 22 12.5141 22 12.8372 21.886C12.9044 21.8623 12.9702 21.835 13.0345 21.8043C13.3436 21.6564 13.593 21.407 14.0919 20.9081L18.8284 16.1716C19.4065 15.5935 19.6955 15.3045 19.8478 14.9369C20 14.5694 20 14.1606 20 13.3431Z"}]],
+            user: [["path",{"d":"M17 8.5C17 5.73858 14.7614 3.5 12 3.5C9.23858 3.5 7 5.73858 7 8.5C7 11.2614 9.23858 13.5 12 13.5C14.7614 13.5 17 11.2614 17 8.5Z"}],["path",{"d":"M19 20.5C19 16.634 15.866 13.5 12 13.5C8.13401 13.5 5 16.634 5 20.5"}]],
+            lock: [["path",{"d":"M12 16.5V14.5"}],["path",{"d":"M4.2678 18.8447C4.49268 20.515 5.87612 21.8235 7.55965 21.9009C8.97627 21.966 10.4153 22 12 22C13.5847 22 15.0237 21.966 16.4403 21.9009C18.1239 21.8235 19.5073 20.515 19.7322 18.8447C19.8789 17.7547 20 16.6376 20 15.5C20 14.3624 19.8789 13.2453 19.7322 12.1553C19.5073 10.485 18.1239 9.17649 16.4403 9.09909C15.0237 9.03397 13.5847 9 12 9C10.4153 9 8.97627 9.03397 7.55965 9.09909C5.87612 9.17649 4.49268 10.485 4.2678 12.1553C4.12104 13.2453 3.99999 14.3624 3.99999 15.5C3.99999 16.6376 4.12104 17.7547 4.2678 18.8447Z"}],["path",{"d":"M7.5 9V6.5C7.5 4.01472 9.51472 2 12 2C14.4853 2 16.5 4.01472 16.5 6.5V9"}]],
+            eye: [["path",{"d":"M21.544 11.045C21.848 11.4713 22 11.6845 22 12C22 12.3155 21.848 12.5287 21.544 12.955C20.1779 14.8706 16.6892 19 12 19C7.31078 19 3.8221 14.8706 2.45604 12.955C2.15201 12.5287 2 12.3155 2 12C2 11.6845 2.15201 11.4713 2.45604 11.045C3.8221 9.12944 7.31078 5 12 5C16.6892 5 20.1779 9.12944 21.544 11.045Z"}],["path",{"d":"M15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15C13.6569 15 15 13.6569 15 12Z"}]],
+            eyeOff: [["path",{"d":"M22 8C22 8 18 14 12 14C6 14 2 8 2 8"}],["path",{"d":"M15 13.5L16.5 16"}],["path",{"d":"M20 11L22 13"}],["path",{"d":"M2 13L4 11"}],["path",{"d":"M9 13.5L7.5 16"}]],
+            bell: [["path",{"d":"M20 18.5011L18.349 7.93407C17.8603 4.80601 15.166 2.5 12 2.5C8.83398 2.5 6.13971 4.80601 5.65098 7.93407L4 18.5011"}],["path",{"d":"M20 18.5C20 16.8431 16.4183 15.5 12 15.5C7.58172 15.5 4 16.8431 4 18.5C4 20.1569 7.58172 21.5 12 21.5C16.4183 21.5 20 20.1569 20 18.5Z"}],["path",{"d":"M13 18.5H11"}]],
+            search: [["path",{"d":"M17 17L21 21"}],["path",{"d":"M19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19C15.4183 19 19 15.4183 19 11Z"}]],
+            mail: [["path",{"d":"M2 6L8.91302 9.91697C11.4616 11.361 12.5384 11.361 15.087 9.91697L22 6"}],["path",{"d":"M2.01577 13.4756C2.08114 16.5412 2.11383 18.0739 3.24496 19.2094C4.37608 20.3448 5.95033 20.3843 9.09883 20.4634C11.0393 20.5122 12.9607 20.5122 14.9012 20.4634C18.0497 20.3843 19.6239 20.3448 20.7551 19.2094C21.8862 18.0739 21.9189 16.5412 21.9842 13.4756C22.0053 12.4899 22.0053 11.5101 21.9842 10.5244C21.9189 7.45886 21.8862 5.92609 20.7551 4.79066C19.6239 3.65523 18.0497 3.61568 14.9012 3.53657C12.9607 3.48781 11.0393 3.48781 9.09882 3.53656C5.95033 3.61566 4.37608 3.65521 3.24495 4.79065C2.11382 5.92608 2.08114 7.45885 2.01576 10.5244C1.99474 11.5101 1.99475 12.4899 2.01577 13.4756Z"}]],
+            checkCircle: [["path",{"d":"M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"}],["path",{"d":"M8 12.5L10.5 15L16 9"}]],
+            xCircle: [["path",{"d":"M22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12Z"}],["path",{"d":"M14.9994 15L9 9M9.00064 15L15 9"}]],
+            chevronL: [["path",{"d":"M15 6C15 6 9.00001 10.4189 9 12C8.99999 13.5812 15 18 15 18"}]],
+            chevronR: [["path",{"d":"M9.00005 6C9.00005 6 15 10.4189 15 12C15 13.5812 9 18 9 18"}]],
+            login: [["path",{"d":"M6 18C6 18.4644 6 18.6965 6.022 18.8918C6.20482 20.5145 7.48545 21.7952 9.10814 21.978C9.30345 22 9.53562 22 9.99998 22H13C16.2998 22 17.9497 22 18.9749 20.9749C20 19.9498 20 18.2998 20 15L20 8.99998C20 5.70016 20 4.05024 18.9748 3.02512C17.9497 2 16.2998 2 13 2H9.99998C9.53563 2 9.30345 2 9.10814 2.02201C7.48545 2.20483 6.20482 3.48547 6.022 5.10816C6 5.30347 6 5.53565 6 6"}],["path",{"d":"M4.07612 11.1183C4 11.3021 4 11.535 4 12.001C4 12.4669 4 12.6999 4.07612 12.8837C4.17761 13.1287 4.37229 13.3234 4.61732 13.4249C4.80109 13.501 5.03406 13.501 5.5 13.501H10.5C10.5002 15.2503 10.511 16.1299 11.0623 16.3858C11.0829 16.3954 11.1037 16.4042 11.1249 16.4124C11.7045 16.6353 12.3999 16.0139 13.7907 14.7711C15.2576 13.4602 15.9912 12.7851 16 11.957C15.9912 11.1289 15.2576 10.4538 13.7907 9.14301C12.3999 7.90018 11.7045 7.27876 11.1249 7.50171C11.1037 7.50985 11.0829 7.51869 11.0623 7.52822C10.5018 7.78844 10.5 8.69318 10.5 10.501H5.5C5.03406 10.501 4.80109 10.501 4.61732 10.5771C4.37229 10.6786 4.17761 10.8733 4.07612 11.1183Z"}]],
+            logout: [["path",{"d":"M18 18C18 18.4644 18 18.6965 17.978 18.8918C17.7952 20.5145 16.5145 21.7952 14.8919 21.978C14.6965 22 14.4644 22 14 22H11C7.70017 22 6.05025 22 5.02513 20.9749C4 19.9498 4 18.2998 4 15L4.00001 8.99998C4.00001 5.70016 4.00003 4.05024 5.02514 3.02512C6.05027 2 7.70018 2 11 2H14C14.4644 2 14.6965 2 14.8919 2.02201C16.5145 2.20483 17.7952 3.48547 17.978 5.10816C18 5.30347 18 5.53565 18 6"}],["path",{"d":"M8.07612 11.1183C8 11.3021 8 11.535 8 12.001C8 12.4669 8 12.6999 8.07612 12.8837C8.17761 13.1287 8.37229 13.3234 8.61732 13.4249C8.80109 13.501 9.03406 13.501 9.5 13.501H14.5C14.5002 15.2503 14.511 16.1299 15.0623 16.3858C15.0829 16.3954 15.1037 16.4042 15.1249 16.4124C15.7045 16.6353 16.3999 16.0139 17.7907 14.7711C19.2576 13.4602 19.9912 12.7851 20 11.957C19.9912 11.1289 19.2576 10.4538 17.7907 9.14301C16.3999 7.90018 15.7045 7.27876 15.1249 7.50171C15.1037 7.50985 15.0829 7.51869 15.0623 7.52822C14.5018 7.78844 14.5 8.69318 14.5 10.501H9.5C9.03406 10.501 8.80109 10.501 8.61732 10.5771C8.37229 10.6786 8.17761 10.8733 8.07612 11.1183Z"}]],
+            plus: [["path",{"d":"M12.001 5.00003V19.002"}],["path",{"d":"M19.002 12.002L4.99998 12.002"}]],
+            edit: [["path",{"d":"M14.0737 3.88545C14.8189 3.07808 15.1915 2.6744 15.5874 2.43893C16.5427 1.87076 17.7191 1.85309 18.6904 2.39232C19.0929 2.6158 19.4769 3.00812 20.245 3.79276C21.0131 4.5774 21.3972 4.96972 21.6159 5.38093C22.1438 6.37312 22.1265 7.57479 21.5703 8.5507C21.3398 8.95516 20.9446 9.33578 20.1543 10.097L10.7506 19.1543C9.25288 20.5969 8.504 21.3182 7.56806 21.6837C6.63212 22.0493 5.6032 22.0224 3.54536 21.9686L3.26538 21.9613C2.63891 21.9449 2.32567 21.9367 2.14359 21.73C1.9615 21.5234 1.98636 21.2043 2.03608 20.5662L2.06308 20.2197C2.20301 18.4235 2.27297 17.5255 2.62371 16.7182C2.97444 15.9109 3.57944 15.2555 4.78943 13.9445L14.0737 3.88545Z"}],["path",{"d":"M13 4L20 11"}],["path",{"d":"M14 22L22 22"}]],
+            calendar: [["path",{"d":"M16 2V6M8 2V6"}],["path",{"d":"M13 4H11C7.22876 4 5.34315 4 4.17157 5.17157C3 6.34315 3 8.22876 3 12V14C3 17.7712 3 19.6569 4.17157 20.8284C5.34315 22 7.22876 22 11 22H13C16.7712 22 18.6569 22 19.8284 20.8284C21 19.6569 21 17.7712 21 14V12C21 8.22876 21 6.34315 19.8284 5.17157C18.6569 4 16.7712 4 13 4Z"}],["path",{"d":"M3 10H21"}]],
+            sun: [["path",{"d":"M17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12Z"}],["path",{"d":"M12 2V3.5M12 20.5V22M19.0708 19.0713L18.0101 18.0106M5.98926 5.98926L4.9286 4.9286M22 12H20.5M3.5 12H2M19.0713 4.92871L18.0106 5.98937M5.98975 18.0107L4.92909 19.0714"}]],
+            moon: [["path",{"d":"M21.5 14.0784C20.3003 14.7189 18.9301 15.0821 17.4751 15.0821C12.7491 15.0821 8.91792 11.2509 8.91792 6.52485C8.91792 5.06986 9.28105 3.69968 9.92163 2.5C5.66765 3.49698 2.5 7.31513 2.5 11.8731C2.5 17.1899 6.8101 21.5 12.1269 21.5C16.6849 21.5 20.503 18.3324 21.5 14.0784Z"}]],
+          };
+          return h('svg', {viewBox:'0 0 24 24', width:size, height:size, fill:'none', stroke:color, strokeWidth:sw, strokeLinecap:'round', strokeLinejoin:'round', style:{display:'block',flexShrink:0}},
+            ...(P[name]||[]).map((p,i) => h(p[0], {key:i, ...p[1]})));
+        }
+
+        logoMark(size){
+          const h=React.createElement; const C=this.C(); size=size||44;
+          return h('div',{style:{width:size,height:size,borderRadius:size*0.3,background:`linear-gradient(150deg,${C.pri},${C.priDk})`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}},this.ic('box',size*0.52,'#fff',1.9));
+        }
+
+        nav(page){ this.setState({page:page, formError:'', stockError:'', stockSuccess:''}); }
+        toggleDark(){ this.setState(s=>({dark:!s.dark})); }
+
+        statusOf(p){
+          if (p.qty<=0) return {key:'out', label:'หมดสต็อก'};
+          if (p.qty<=p.reorderPoint) return {key:'low', label:'ใกล้หมด'};
+          return {key:'ok', label:'ปกติ'};
+        }
+        statusColors(key){
+          const C=this.C();
+          if (key==='out') return {fg:C.lRd,bg:C.lBg,tx:C.lTx};
+          if (key==='low') return {fg:C.amb,bg:C.ambBg,tx:C.ambTx};
+          return {fg:C.aGr,bg:C.aBg,tx:C.aTx};
+        }
+        badge(label,key){
+          const h=React.createElement; const sc=this.statusColors(key);
+          return h('span',{style:{display:'inline-flex',alignItems:'center',gap:5,background:sc.bg,color:sc.tx,fontSize:11,fontWeight:700,padding:'4px 11px',borderRadius:20,whiteSpace:'nowrap'}},
+            h('span',{style:{width:6,height:6,borderRadius:'50%',background:sc.fg,display:'block'}}), label);
+        }
+
+        input(label, value, onChange, opts){
+          opts = opts || {};
+          const h=React.createElement; const C=this.C(); const bf=this.bf();
+          const isPw = opts.type==='password';
+          return h('div',{style:{width:'100%'}},
+            h('div',{style:{display:'flex',alignItems:'baseline',justifyContent:'space-between',marginBottom:6}},
+              h('label',{style:{fontSize:13.5,fontWeight:600,color:C.txDk,fontFamily:bf}}, label),
+              opts.aside||null),
+            h('div',{style:{position:'relative'}},
+              h('input',{
+                type: isPw && this.state.showPw ? 'text' : (opts.type||'text'),
+                value: value,
+                placeholder: opts.placeholder||'',
+                onChange: e=>onChange(e.target.value),
+                style:{width:'100%',boxSizing:'border-box',background:C.inputBg,border:`1.5px solid ${opts.error?C.lRd:C.border}`,borderRadius:12,padding: isPw?'12px 44px 12px 14px':'12px 14px',fontSize:14.5,color:C.txDk,fontFamily:bf,outline:'none'}
+              }),
+              isPw ? h('button',{type:'button', onClick:()=>this.setState(s=>({showPw:!s.showPw})), style:{position:'absolute',right:10,top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',padding:4,display:'flex'}}, this.ic(this.state.showPw?'eyeOff':'eye',18,C.txSb,1.8)) : null),
+            opts.error ? h('div',{style:{fontSize:11.5,color:C.lRd,marginTop:5}}, opts.error) : (opts.hint ? h('div',{style:{fontSize:11.5,color:C.txSb,marginTop:5}}, opts.hint) : null));
+        }
+
+        selectField(label, value, options, onChange){
+          const h=React.createElement; const C=this.C(); const bf=this.bf();
+          return h('div',{style:{width:'100%'}},
+            h('label',{style:{display:'block',fontSize:13.5,fontWeight:600,color:C.txDk,marginBottom:6,fontFamily:bf}}, label),
+            h('select',{value:value, onChange:e=>onChange(e.target.value), style:{width:'100%',boxSizing:'border-box',background:C.inputBg,border:`1.5px solid ${C.border}`,borderRadius:12,padding:'12px 14px',fontSize:14.5,color:C.txDk,fontFamily:bf,outline:'none',appearance:'none'}},
+              options.map((o,i)=>h('option',{key:i,value:o.value||o}, o.label||o))));
+        }
+
+        button(label, onClick, variant, icon, extra){
+          const h=React.createElement; const C=this.C(); const bf=this.bf();
+          const base = {border:'none',borderRadius:12,fontSize:14.5,fontWeight:700,cursor:'pointer',fontFamily:bf,display:'inline-flex',alignItems:'center',justifyContent:'center',gap:8,padding:'12px 22px'};
+          let style;
+          if (variant==='secondary') style={...base,background:'transparent',color:C.pri,border:`1.5px solid ${C.pri}`};
+          else if (variant==='ghost') style={...base,background:'transparent',color:C.txMd,border:`1.5px solid ${C.border}`};
+          else if (variant==='danger') style={...base,background:C.lBg,color:C.lRd};
+          else style={...base,background:C.pri,color:'#fff',boxShadow:`0 4px 16px ${this.state.dark?'rgba(0,0,0,0.4)':'rgba(1,120,123,0.28)'}`};
+          return h('button',{onClick:onClick, style:{...style, ...(extra||{})}}, icon?this.ic(icon,17,style.color,2.1):null, label);
+        }
+
+        /* ───────────── AUTH PAGES ───────────── */
+        authFeature(text){
+          const h=React.createElement; const C=this.C();
+          return h('div',{style:{display:'flex',alignItems:'center',gap:10}},
+            h('div',{style:{width:20,height:20,borderRadius:'50%',background:C.aBg,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}},this.ic('checkCircle',13,C.aGr,2.4)),
+            h('span',{style:{fontSize:14,color:C.txMd,fontFamily:this.bf()}}, text));
+        }
+        authShell(formEl){
+          const h=React.createElement; const C=this.C(); const bf=this.bf();
+          const mobile = this.isMobile();
+          const dotBg = this.state.dark
+            ? `radial-gradient(${C.border} 1px, transparent 1px)`
+            : `radial-gradient(#DEDACD 1px, transparent 1px)`;
+          return h('div',{style:{display:'flex',flexDirection:mobile?'column':'row',minHeight:'100vh',width:'100%'}},
+            h('div',{style:{flex: mobile?'0 0 auto':'1 1 46%',background:C.authPanelBg,backgroundImage:dotBg,backgroundSize:'22px 22px',padding: mobile?'32px 24px':'56px 64px',display:'flex',flexDirection:'column',justifyContent:'space-between',position:'relative'}},
+              h('div',{},
+                h('div',{style:{display:'flex',alignItems:'center',gap:12,marginBottom: mobile?24:64}},
+                  this.logoMark(mobile?36:46),
+                  h('div',{},
+                    h('div',{style:{fontSize:mobile?16:19,fontWeight:800,color:C.txDk,fontFamily:bf}},'Genius Stock'),
+                    h('div',{style:{fontSize:12.5,color:C.txSb,fontFamily:this.bf()}},'ระบบคงคลังสินค้าเบิกจ่าย'))),
+                mobile?null:h('div',{style:{width:56,height:56,borderRadius:16,background:C.pri,display:'flex',alignItems:'center',justifyContent:'center',marginBottom:28}}, this.ic('chartBar',28,'#fff',1.8)),
+                h('h1',{style:{fontSize:mobile?26:38,fontWeight:800,color:C.txDk,margin:'0 0 12px',lineHeight:1.25,letterSpacing:'-0.01em',fontFamily:"'Anuphan',sans-serif"}},mobile?'จัดการคลังสินค้าอย่างชาญฉลาด':h(React.Fragment,{},'จัดการคลังสินค้า',h('br'),'อย่างชาญฉลาด')),
+                mobile?null:h('p',{style:{fontSize:15,color:C.txMd,lineHeight:1.6,margin:'0 0 28px',maxWidth:400,fontFamily:"'Anuphan',sans-serif"}},'ระบบเบิกจ่ายสินค้าที่ออกแบบมาเพื่อประสิทธิภาพสูงสุดขององค์กรคุณ'),
+                mobile?null:h('div',{style:{display:'flex',flexDirection:'column',gap:14}},
+                  this.authFeature('ติดตามสต็อกแบบ Real-time'),
+                  this.authFeature('ป้องกันการเบิกเกินจำนวน'),
+                  this.authFeature('รายงานการเคลื่อนไหวครบถ้วน'))),
+              mobile?null:h('div',{style:{fontSize:12.5,color:C.txSb,fontFamily:bf}},'© 2026 Genius Stock · ระบบคงคลังสินค้าเบิกจ่ายภายในองค์กร')),
+            h('div',{style:{flex: mobile?'1 1 auto':'1 1 54%',background:C.cardBg,display:'flex',flexDirection:'column',position:'relative'}},
+              h('div',{style:{display:'flex',justifyContent:'flex-end',padding: mobile?'16px 20px 0':'28px 40px 0'}},
+                h('button',{onClick:()=>this.toggleDark(), style:{background:'none',border:'none',cursor:'pointer',padding:8,display:'flex'}}, this.ic(this.state.dark?'sun':'moon',20,C.txMd,1.8))),
+              h('div',{style:{flex:1,display:'flex',alignItems:'center',justifyContent:'center',padding: mobile?'20px 20px 40px':'20px 40px 60px'}},
+                h('div',{style:{width:'100%',maxWidth:400}}, formEl))));
+        }
+
+        renderLogin(){
+          const h=React.createElement; const C=this.C(); const bf=this.bf();
+          return this.authShell(h('div',{},
+            h('h2',{style:{fontSize:24,fontWeight:800,color:C.txDk,margin:'0 0 8px',fontFamily:"'Anuphan',sans-serif"}},'เข้าสู่ระบบ'),
+            h('p',{style:{fontSize:14,color:C.txSb,margin:'0 0 28px',fontFamily:"'Anuphan',sans-serif"}},'กรอกอีเมลและรหัสผ่านเพื่อเข้าใช้งาน'),
+            h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+              this.input('อีเมล', this.state.formSku, v=>this.setState({formSku:v}), {placeholder:'you@example.com'}),
+              this.input('รหัสผ่าน', this.state.formName, v=>this.setState({formName:v}), {type:'password', aside: h('a',{href:'#',onClick:e=>{e.preventDefault();this.nav('forgot');},style:{fontSize:12.5,color:C.pri,textDecoration:'none',fontWeight:600}},'ลืมรหัสผ่าน?')}),
+              this.button('เข้าสู่ระบบ', ()=>this.nav('dashboard'), 'primary', null, {width:'100%',marginTop:6,padding:'13px 22px'})),
+            h('div',{style:{textAlign:'center',marginTop:22,fontSize:13.5,color:C.txSb,fontFamily:this.bf()}},'ยังไม่มีบัญชี? ', h('a',{href:'#',onClick:e=>{e.preventDefault();this.nav('register');},style:{color:C.pri,fontWeight:700,textDecoration:'none'}},'สมัครสมาชิก'))));
+        }
+        renderRegister(){
+          const h=React.createElement; const C=this.C();
+          return this.authShell(h('div',{},
+            h('h2',{style:{fontSize:24,fontWeight:800,color:C.txDk,margin:'0 0 8px',fontFamily:"'Anuphan',sans-serif"}},'สมัครสมาชิก'),
+            h('p',{style:{fontSize:14,color:C.txSb,margin:'0 0 28px',fontFamily:"'Anuphan',sans-serif"}},'สร้างบัญชีใหม่เพื่อเริ่มใช้งาน Genius Stock'),
+            h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+              this.input('ชื่อ-นามสกุล', this.state.formCategory, v=>this.setState({formCategory:v})),
+              this.input('อีเมล', this.state.formSku, v=>this.setState({formSku:v}), {placeholder:'you@example.com'}),
+              this.input('รหัสผ่าน', this.state.formName, v=>this.setState({formName:v}), {type:'password', hint:'อย่างน้อย 8 ตัวอักษร'}),
+              this.button('สมัครสมาชิก', ()=>this.nav('login'), 'primary', null, {width:'100%',marginTop:6,padding:'13px 22px'})),
+            h('div',{style:{textAlign:'center',marginTop:22,fontSize:13.5,color:C.txSb,fontFamily:this.bf()}},'มีบัญชีแล้ว? ', h('a',{href:'#',onClick:e=>{e.preventDefault();this.nav('login');},style:{color:C.pri,fontWeight:700,textDecoration:'none'}},'เข้าสู่ระบบ'))));
+        }
+        renderForgot(){
+          const h=React.createElement; const C=this.C();
+          const sent = !!this.state.stockSuccess;
+          return this.authShell(h('div',{},
+            h('h2',{style:{fontSize:24,fontWeight:800,color:C.txDk,margin:'0 0 8px',fontFamily:"'Anuphan',sans-serif"}},'ลืมรหัสผ่าน?'),
+            h('p',{style:{fontSize:14,color:C.txSb,margin:'0 0 28px',fontFamily:"'Anuphan',sans-serif"}},'กรอกอีเมลเพื่อรับลิงก์รีเซ็ตรหัสผ่าน'),
+            sent ? h('div',{style:{background:C.aBg,color:C.aTx,borderRadius:12,padding:'14px 16px',fontSize:13.5,display:'flex',gap:9,alignItems:'center',fontFamily:this.bf()}}, this.ic('checkCircle',18,C.aGr,2), 'ส่งลิงก์รีเซ็ตไปที่อีเมลของคุณแล้ว') :
+            h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+              this.input('อีเมล', this.state.formSku, v=>this.setState({formSku:v}), {placeholder:'you@example.com'}),
+              this.button('ส่งลิงก์รีเซ็ต', ()=>this.setState({stockSuccess:'1'}), 'primary', null, {width:'100%',marginTop:6,padding:'13px 22px'})),
+            h('div',{style:{textAlign:'center',marginTop:22,fontSize:13.5}}, h('a',{href:'#',onClick:e=>{e.preventDefault();this.setState({stockSuccess:''});this.nav('login');},style:{color:C.pri,fontWeight:700,textDecoration:'none'}},'← กลับไปเข้าสู่ระบบ'))));
+        }
+
+        /* ───────────── APP SHELL ───────────── */
+        sidebarItem(icon,label,page,badgeCount,inert,railOnly){
+          const h=React.createElement; const C=this.C();
+          const active = this.state.page===page;
+          return h('div',{
+            onClick: inert?undefined:()=>{this.nav(page); this.setState({mobileNavOpen:false});},
+            title: railOnly?label:undefined,
+            style:{display:'flex',alignItems:'center',gap:11,padding: railOnly?'11px':'10px 14px',borderRadius:11,cursor:inert?'default':'pointer',background:active?C.pri:'transparent',opacity:inert?0.45:1,transition:'background 0.15s',justifyContent:railOnly?'center':'flex-start'},
+          },
+            this.ic(icon,18,active?'#fff':'rgba(255,255,255,0.75)',1.8),
+            railOnly?null:h('span',{style:{flex:1,fontSize:13.5,fontWeight:active?700:500,color:active?'#fff':'rgba(255,255,255,0.85)',fontFamily:this.bf()}},label),
+            (badgeCount&&!railOnly)?h('span',{style:{background:C.lRd,color:'#fff',fontSize:10.5,fontWeight:700,borderRadius:10,padding:'1px 7px'}},badgeCount):null);
+        }
+        sidebarNav(railOnly){
+          const h=React.createElement; const C=this.C(); const bf=this.bf();
+          const lowCount = this.state.products.filter(p=>p.qty<=p.reorderPoint).length;
+          return h(React.Fragment,{},
+            h('div',{style:{display:'flex',alignItems:'center',gap:10,padding: railOnly?'6px 0 22px':'6px 10px 22px',justifyContent:railOnly?'center':'flex-start'}},
+              this.logoMark(38),
+              railOnly?null:h('div',{},
+                h('div',{style:{fontSize:15,fontWeight:800,color:'#fff',fontFamily:bf}},'Genius Stock'),
+                h('div',{style:{fontSize:10.5,color:'rgba(255,255,255,0.55)',fontFamily:bf}},'ระบบคงคลังสินค้า'))),
+            railOnly?null:h('div',{style:{fontSize:10.5,fontWeight:700,color:'rgba(255,255,255,0.4)',letterSpacing:'0.06em',padding:'4px 14px 8px'}},'เมนูหลัก'),
+            this.sidebarItem('grid','ภาพรวม','dashboard',null,false,railOnly),
+            this.sidebarItem('box','สินค้า','products',null,false,railOnly),
+            this.sidebarItem('arrowInBox','รับสินค้าเข้า','stock-in',null,false,railOnly),
+            this.sidebarItem('arrowOutBox','เบิกจ่ายสินค้า','stock-out',null,false,railOnly),
+            this.sidebarItem('alertTri','สินค้าใกล้หมด','low-stock', lowCount||null,false,railOnly),
+            this.sidebarItem('doc','ประวัติการเคลื่อนไหว','transactions',null,false,railOnly),
+            railOnly?null:h('div',{style:{fontSize:10.5,fontWeight:700,color:'rgba(255,255,255,0.4)',letterSpacing:'0.06em',padding:'16px 14px 8px'}},'อื่น ๆ'),
+            this.sidebarItem('users','ผู้ใช้งาน',null,null,true,railOnly),
+            this.sidebarItem('gear','ตั้งค่า',null,null,true,railOnly),
+            h('div',{style:{flex:1}}),
+            h('div',{onClick:()=>this.nav('login'),style:{display:'flex',alignItems:'center',gap:11,padding: railOnly?'11px':'10px 14px',borderRadius:11,cursor:'pointer',justifyContent:railOnly?'center':'flex-start'}}, this.ic('logout',18,'rgba(255,255,255,0.75)',1.8), railOnly?null:h('span',{style:{fontSize:13.5,color:'rgba(255,255,255,0.85)',fontFamily:bf}},'ออกจากระบบ')));
+        }
+        appShell(title, subtitle, content){
+          const h=React.createElement; const C=this.C(); const bf=this.bf();
+          const mobile = this.isMobile();
+          const tablet = this.isTablet();
+          const navOpen = this.state.mobileNavOpen;
+          return h('div',{style:{display:'flex',minHeight:'100vh',width:'100%',position:'relative'}},
+            mobile ? h(React.Fragment,{},
+              navOpen ? h('div',{onClick:()=>this.setState({mobileNavOpen:false}),style:{position:'fixed',inset:0,background:'rgba(0,0,0,0.45)',zIndex:20}}) : null,
+              h('div',{style:{position:'fixed',top:0,left:0,bottom:0,width:230,background:C.sidebarBg,padding:'22px 14px',display:'flex',flexDirection:'column',gap:4,zIndex:21,transform: navOpen?'translateX(0)':'translateX(-100%)',transition:'transform 0.22s ease',boxShadow: navOpen?'8px 0 30px rgba(0,0,0,0.3)':'none'}},
+                this.sidebarNav(false))
+            ) : h('div',{style:{width: tablet?76:236,flexShrink:0,background:C.sidebarBg,padding: tablet?'22px 10px':'22px 14px',display:'flex',flexDirection:'column',gap:4,transition:'width 0.15s'}},
+              this.sidebarNav(tablet)),
+            h('div',{style:{flex:1,minWidth:0,display:'flex',flexDirection:'column'}},
+              h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',padding: mobile?'16px 18px':'20px 36px',borderBottom:`1px solid ${C.border}`,gap:12,flexWrap:'wrap'}},
+                h('div',{style:{display:'flex',alignItems:'center',gap:12,minWidth:0}},
+                  mobile?h('button',{onClick:()=>this.setState({mobileNavOpen:true}),style:{background:'none',border:'none',cursor:'pointer',padding:4,display:'flex',flexShrink:0}}, this.ic('grid',20,C.txDk,1.8)):null,
+                  h('div',{style:{minWidth:0}},
+                    h('div',{style:{fontSize: mobile?17:21,fontWeight:800,color:C.txDk,fontFamily:"'Anuphan',sans-serif",whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},title),
+                    subtitle?h('div',{style:{fontSize:12,color:C.txSb,marginTop:2,fontFamily:this.bf(),whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},subtitle):null)),
+                h('div',{style:{display:'flex',alignItems:'center',gap:14,flexShrink:0}},
+                  h('button',{onClick:()=>this.toggleDark(),style:{background:'none',border:'none',cursor:'pointer',padding:6,display:'flex'}}, this.ic(this.state.dark?'sun':'moon',19,C.txMd,1.8)),
+                  h('div',{onClick:()=>this.nav('login'),style:{width:34,height:34,borderRadius:'50%',background:C.pri,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:13.5,fontWeight:700,cursor:'pointer',fontFamily:bf}},'S'))),
+              h('div',{style:{flex:1,padding: mobile?'18px 16px':'28px 36px',overflow:'auto'}}, content)));
+        }
+
+        card(children, style){
+          const h=React.createElement; const C=this.C();
+          return h('div',{style:{background:C.cardBg,borderRadius:18,border:`1px solid ${C.border}`,boxShadow:C.shadow,...(style||{})}}, children);
+        }
+
+        /* ───────────── DASHBOARD ───────────── */
+        statCard(icon,label,value,tag,tagColor){
+          const h=React.createElement; const C=this.C();
+          return this.card(h('div',{style:{padding:22}},
+            h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}},
+              h('div',{style:{width:38,height:38,borderRadius:11,background:C.priTint,display:'flex',alignItems:'center',justifyContent:'center'}}, this.ic(icon,19,C.pri,1.8)),
+              tag?h('span',{style:{fontSize:11,fontWeight:700,color:tagColor||C.txSb}},tag):null),
+            h('div',{style:{fontSize:12.5,color:C.txMd,marginBottom:5,fontFamily:this.bf()}},label),
+            h('div',{style:{fontSize:25,fontWeight:800,color:C.txDk,fontFamily:this.bf()}},value)));
+        }
+        renderDashboard(){
+          const h=React.createElement; const C=this.C();
+          const products=this.state.products;
+          const totalQty = products.reduce((a,p)=>a+p.qty,0);
+          const totalValue = products.reduce((a,p)=>a+p.qty*p.price,0);
+          const lowItems = products.filter(p=>p.qty<=p.reorderPoint);
+          const outCount = products.filter(p=>p.qty<=0).length;
+          const trend=[['ส',2,3],['อา',1,2],['จ',4,3],['อ',2,1],['พ',3,4],['พฤ',1,2],['ศ',3,5]];
+          const maxT = Math.max(...trend.flatMap(t=>[t[1],t[2]]));
+          const nameOf = pid => (products.find(p=>p.id===pid)||{}).name || '';
+          const content = h('div',{style:{display:'flex',flexDirection:'column',gap:20}},
+            lowItems.length ? h('div',{style:{display:'flex',alignItems:'center',gap:14,background:C.ambBg,border:`1px solid ${C.amb}33`,borderRadius:16,padding:'14px 20px'}},
+              this.ic('alertTri',20,C.amb,1.9),
+              h('div',{style:{flex:1,fontSize:13.5,color:C.txDk,fontFamily:this.bf()}}, `มีสินค้า ${lowItems.length} รายการที่ยอดคงเหลือต่ำกว่าจุดสั่งซื้อ` + (outCount?` และ ${outCount} รายการหมดสต็อกแล้ว — ควรเปิด PO รับเข้าโดยด่วน`:'')),
+              this.button('ดูรายการ', ()=>this.nav('low-stock'), 'primary', null, {padding:'9px 18px',fontSize:13})) : null,
+            h('div',{style:{display:'grid',gridTemplateColumns: this.isMobile()?'repeat(2,1fr)':(this.isTablet()?'repeat(2,1fr)':'repeat(4,1fr)'),gap:16}},
+              this.statCard('box','สินค้าทั้งหมด', products.length+' รายการ', 'รวม'),
+              this.statCard('chartBar','มูลค่าสต็อกคงเหลือ', '฿'+totalValue.toLocaleString(), null),
+              this.statCard('arrowInBox','รับเข้าวันนี้', '+0 ชิ้น', 'วันนี้', C.aGr),
+              this.statCard('arrowOutBox','เบิกจ่ายวันนี้', '-'+this.state.transactions.filter(t=>t.type==='OUT').reduce((a,t)=>a+t.qty,0)+' ชิ้น', 'สัปดาห์นี้', C.lRd)),
+            h('div',{style:{display:'grid',gridTemplateColumns: this.isCompact()?'1fr':'1.5fr 1fr',gap:20,alignItems:'start'}},
+              this.card(h('div',{style:{padding:'20px 22px'}},
+                h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}},
+                  h('div',{style:{fontSize:14,fontWeight:700,color:C.txDk,fontFamily:this.bf()}},'รายการสินค้าในคลัง'),
+                  h('a',{href:'#',onClick:e=>{e.preventDefault();this.nav('products');},style:{fontSize:12.5,color:C.pri,fontWeight:600,textDecoration:'none'}},'ดูทั้งหมด →')),
+                h('div',{style:{overflowX:'auto'}},
+                h('table',{style:{width:'100%',borderCollapse:'collapse',minWidth:420}},
+                  h('thead',{}, h('tr',{}, ['SKU','ชื่อสินค้า','คงเหลือ','สถานะ'].map((th,i)=>h('th',{key:i,style:{textAlign:i>1?'right':'left',fontSize:11,color:C.txSb,fontWeight:600,padding:'6px 8px',borderBottom:`1px solid ${C.border}`}},th)))),
+                  h('tbody',{}, products.slice(0,6).map(p=>{
+                    const st=this.statusOf(p);
+                    return h('tr',{key:p.id},
+                      h('td',{style:{padding:'10px 8px',fontSize:12.5,color:C.txSb,fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},p.sku),
+                      h('td',{style:{padding:'10px 8px',fontSize:13.5,fontWeight:600,color:C.txDk,fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},p.name),
+                      h('td',{style:{padding:'10px 8px',fontSize:13.5,color:C.txDk,textAlign:'right',fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},p.qty),
+                      h('td',{style:{padding:'10px 8px',textAlign:'right',borderBottom:`1px solid ${C.border}`}}, this.badge(st.label,st.key)));
+                  })))))),
+              h('div',{style:{display:'flex',flexDirection:'column',gap:20}},
+                this.card(h('div',{style:{padding:'20px 22px'}},
+                  h('div',{style:{fontSize:14,fontWeight:700,color:C.txDk,marginBottom:16,fontFamily:this.bf()}},'การเคลื่อนไหวสต็อก 7 วัน'),
+                  h('div',{style:{display:'flex',alignItems:'flex-end',gap:10,height:110}},
+                    trend.map((t,i)=>h('div',{key:i,style:{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:4,height:'100%',justifyContent:'flex-end'}},
+                      h('div',{style:{display:'flex',gap:3,alignItems:'flex-end',height:'100%'}},
+                        h('div',{style:{width:7,borderRadius:3,background:C.aGr,height:(t[1]/maxT*90)+'%'}}),
+                        h('div',{style:{width:7,borderRadius:3,background:C.amb,height:(t[2]/maxT*90)+'%'}})),
+                      h('span',{style:{fontSize:10,color:C.txSb}},t[0])))),
+                  h('div',{style:{display:'flex',gap:16,marginTop:14,fontSize:11.5,color:C.txMd}},
+                    h('span',{style:{display:'flex',alignItems:'center',gap:5}}, h('span',{style:{width:8,height:8,borderRadius:2,background:C.aGr,display:'block'}}),'รับเข้า'),
+                    h('span',{style:{display:'flex',alignItems:'center',gap:5}}, h('span',{style:{width:8,height:8,borderRadius:2,background:C.amb,display:'block'}}),'เบิกจ่าย')))),
+                this.card(h('div',{style:{padding:'20px 22px'}},
+                  h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}},
+                    h('div',{style:{fontSize:14,fontWeight:700,color:C.txDk,fontFamily:this.bf()}},'รายการล่าสุด'),
+                    h('a',{href:'#',onClick:e=>{e.preventDefault();this.nav('transactions');},style:{fontSize:12.5,color:C.pri,fontWeight:600,textDecoration:'none'}},'ดูทั้งหมด →')),
+                  h('div',{style:{display:'flex',flexDirection:'column',gap:12}},
+                    this.state.transactions.slice(0,5).map(t=>h('div',{key:t.id,style:{display:'flex',alignItems:'flex-start',gap:10}},
+                      h('div',{style:{width:30,height:30,borderRadius:9,background:t.type==='IN'?C.aBg:C.ambBg,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}, this.ic(t.type==='IN'?'arrowInBox':'arrowOutBox',15,t.type==='IN'?C.aGr:C.amb,2)),
+                      h('div',{style:{flex:1,minWidth:0}},
+                        h('div',{style:{fontSize:12.5,fontWeight:600,color:C.txDk,fontFamily:this.bf()}}, (t.type==='IN'?'รับเข้า · ':'เบิกจ่าย · ')+nameOf(t.pid)),
+                        h('div',{style:{fontSize:11,color:C.txSb}}, t.note)),
+                      h('div',{style:{fontSize:13,fontWeight:700,color:t.type==='IN'?C.aGr:C.amb,whiteSpace:'nowrap'}}, (t.type==='IN'?'+':'-')+t.qty))))))))
+          );
+          return this.appShell('ภาพรวมคลังสินค้า', 'อัปเดตล่าสุดวันนี้', content);
+        }
+
+        /* ───────────── PRODUCTS ───────────── */
+        renderProducts(){
+          const h=React.createElement; const C=this.C();
+          const cats = ['ทั้งหมด', ...Array.from(new Set(this.state.products.map(p=>p.category)))];
+          let list = this.state.products;
+          if (this.state.categoryFilter!=='ทั้งหมด') list = list.filter(p=>p.category===this.state.categoryFilter);
+          if (this.state.search.trim()) { const s=this.state.search.trim().toLowerCase(); list = list.filter(p=>p.name.toLowerCase().includes(s)||p.sku.toLowerCase().includes(s)); }
+          const content = h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+            h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,flexWrap:'wrap'}},
+              h('div',{style:{position:'relative',flex:'1 1 260px',maxWidth:320}},
+                h('div',{style:{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)'}}, this.ic('search',16,C.txSb,2)),
+                h('input',{value:this.state.search, onChange:e=>this.setState({search:e.target.value}), placeholder:'ค้นหาชื่อสินค้าหรือ SKU', style:{width:'100%',boxSizing:'border-box',background:C.cardBg,border:`1.5px solid ${C.border}`,borderRadius:12,padding:'10px 14px 10px 36px',fontSize:13.5,color:C.txDk,fontFamily:this.bf(),outline:'none'}})),
+              h('div',{style:{display:'flex',gap:8,flexWrap:'wrap'}}, cats.map(c=>h('span',{key:c,onClick:()=>this.setState({categoryFilter:c}),style:{cursor:'pointer',background:this.state.categoryFilter===c?C.pri:C.cardBg,color:this.state.categoryFilter===c?'#fff':C.txMd,border:`1.5px solid ${this.state.categoryFilter===c?C.pri:C.border}`,borderRadius:20,padding:'6px 14px',fontSize:12.5,fontWeight:this.state.categoryFilter===c?700:500}},c))),
+              this.button('เพิ่มสินค้า', ()=>{this.setState({editingId:null,formSku:'',formName:'',formCategory:'',formUnit:'',formQty:'',formReorder:'',formPrice:'',formError:''});this.nav('product-new');}, 'primary', 'plus')),
+            this.card(h('div',{style:{padding:'8px 6px',overflowX:'auto'}},
+              h('table',{style:{width:'100%',borderCollapse:'collapse',minWidth:760}},
+                h('thead',{}, h('tr',{}, ['SKU','ชื่อสินค้า','คงเหลือ','จุดสั่งซื้อ','มูลค่ารวม','สถานะ',''].map((th,i)=>h('th',{key:i,style:{textAlign:(i>=2&&i<=4)?'right':(i===6?'center':'left'),fontSize:11.5,color:C.txSb,fontWeight:600,padding:'10px 14px',borderBottom:`1px solid ${C.border}`}},th)))),
+                h('tbody',{}, list.map(p=>{
+                  const st=this.statusOf(p);
+                  return h('tr',{key:p.id},
+                    h('td',{style:{padding:'13px 14px',fontSize:12.5,color:C.txSb,fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},p.sku),
+                    h('td',{style:{padding:'13px 14px',borderBottom:`1px solid ${C.border}`}}, h('div',{style:{fontSize:13.5,fontWeight:700,color:C.txDk,fontFamily:this.bf()}},p.name), h('div',{style:{fontSize:11,color:C.txSb}},p.category)),
+                    h('td',{style:{padding:'13px 14px',fontSize:13.5,color:C.txDk,textAlign:'right',fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},p.qty+' '+p.unit),
+                    h('td',{style:{padding:'13px 14px',fontSize:13,color:C.txSb,textAlign:'right',fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},p.reorderPoint),
+                    h('td',{style:{padding:'13px 14px',fontSize:13.5,color:C.txDk,textAlign:'right',fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},'฿'+(p.qty*p.price).toLocaleString()),
+                    h('td',{style:{padding:'13px 14px',textAlign:'right',borderBottom:`1px solid ${C.border}`}}, this.badge(st.label,st.key)),
+                    h('td',{style:{padding:'13px 14px',textAlign:'center',borderBottom:`1px solid ${C.border}`}},
+                      h('div',{style:{display:'flex',gap:6,justifyContent:'center'}},
+                        h('button',{onClick:()=>{this.setState({editingId:p.id,formSku:p.sku,formName:p.name,formCategory:p.category,formUnit:p.unit,formQty:String(p.qty),formReorder:String(p.reorderPoint),formPrice:String(p.price),formError:''});this.nav('product-edit');}, style:{background:C.priTint,border:'none',borderRadius:9,width:30,height:30,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}, this.ic('edit',14,C.pri,2)),
+                        h('button',{onClick:()=>{ if(window.confirm('ลบสินค้า '+p.name+' ?')) this.setState(s=>({products:s.products.filter(x=>x.id!==p.id)})); }, style:{background:C.lBg,border:'none',borderRadius:9,width:30,height:30,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}, this.ic('trash',14,C.lRd,2)))));
+                })))))
+          );
+          return this.appShell('จัดการสินค้า', list.length+' รายการ', content);
+        }
+
+        /* ───────────── PRODUCT FORM (new/edit) ───────────── */
+        renderProductForm(){
+          const h=React.createElement; const C=this.C();
+          const isEdit = !!this.state.editingId;
+          const units = ['ชิ้น','กล่อง','ลัง','รีม','ตลับ','แกลลอน','ใบ','ม้วน'];
+          const save = () => {
+            const s=this.state;
+            if (!s.formSku.trim() || !s.formName.trim() || !s.formUnit.trim()) { this.setState({formError:'กรุณากรอก SKU, ชื่อสินค้า และหน่วยนับให้ครบ'}); return; }
+            const dup = this.state.products.find(p=>p.sku===s.formSku.trim() && p.id!==s.editingId);
+            if (dup) { this.setState({formError:'SKU นี้มีอยู่แล้วในระบบ'}); return; }
+            const rec = {sku:s.formSku.trim(), name:s.formName.trim(), category:s.formCategory.trim()||'ทั่วไป', unit:s.formUnit.trim(), qty:Number(s.formQty)||0, reorderPoint:Number(s.formReorder)||0, price:Number(s.formPrice)||0};
+            if (isEdit) this.setState(st=>({products: st.products.map(p=>p.id===st.editingId?{...p,...rec}:p)}));
+            else this.setState(st=>({products:[...st.products, {id:'p'+Date.now(), ...rec}]}));
+            this.nav('products');
+          };
+          const cols2 = this.isMobile()?'1fr':'1fr 1fr';
+          const cols3 = this.isMobile()?'1fr':'1fr 1fr 1fr';
+          const content = this.card(h('div',{style:{padding: this.isMobile()?18:28,maxWidth:640}},
+            this.state.formError ? h('div',{style:{background:C.lBg,color:C.lTx,borderRadius:11,padding:'11px 15px',fontSize:13,marginBottom:18,display:'flex',gap:8,alignItems:'center'}}, this.ic('xCircle',16,C.lRd,2), this.state.formError) : null,
+            h('div',{style:{display:'grid',gridTemplateColumns:cols2,gap:18,marginBottom:18}},
+              this.input('SKU', this.state.formSku, v=>this.setState({formSku:v}), {placeholder:'SKU-1008'}),
+              this.input('ชื่อสินค้า', this.state.formName, v=>this.setState({formName:v}), {placeholder:'ชื่อสินค้า'})),
+            h('div',{style:{display:'grid',gridTemplateColumns:cols2,gap:18,marginBottom:18}},
+              this.input('หมวดหมู่', this.state.formCategory, v=>this.setState({formCategory:v}), {placeholder:'เช่น เครื่องเขียน'}),
+              this.selectField('หน่วยนับ', this.state.formUnit||units[0], units, v=>this.setState({formUnit:v}))),
+            h('div',{style:{display:'grid',gridTemplateColumns:cols3,gap:18,marginBottom:26}},
+              this.input('จำนวนคงเหลือ', this.state.formQty, v=>this.setState({formQty:v.replace(/[^0-9]/g,'')}), {placeholder:'0'}),
+              this.input('จุดสั่งซื้อขั้นต่ำ', this.state.formReorder, v=>this.setState({formReorder:v.replace(/[^0-9]/g,'')}), {placeholder:'0'}),
+              this.input('ราคา/หน่วย (บาท)', this.state.formPrice, v=>this.setState({formPrice:v.replace(/[^0-9.]/g,'')}), {placeholder:'0.00'})),
+            h('div',{style:{display:'flex',gap:10}}, this.button(isEdit?'บันทึกการแก้ไข':'บันทึกสินค้า', save, 'primary'), this.button('ยกเลิก', ()=>this.nav('products'), 'ghost'))));
+          return this.appShell(isEdit?'แก้ไขสินค้า':'เพิ่มสินค้าใหม่', isEdit?this.state.formSku:'กรอกข้อมูลสินค้าใหม่', content);
+        }
+
+        /* ───────────── STOCK IN / OUT ───────────── */
+        renderStockForm(isIn){
+          const h=React.createElement; const C=this.C();
+          const products=this.state.products;
+          const p = products.find(x=>x.id===this.state.stockPid) || products[0];
+          const qtyNum = Number(this.state.stockQty)||0;
+          const after = isIn ? p.qty+qtyNum : p.qty-qtyNum;
+          const blocked = !isIn && qtyNum>p.qty;
+          const confirm = () => {
+            if (qtyNum<=0) { this.setState({stockError:'กรุณาระบุจำนวนมากกว่า 0'}); return; }
+            if (blocked) { this.setState({stockError:'จำนวนที่เบิกเกินยอดคงเหลือ ไม่สามารถทำรายการได้'}); return; }
+            this.setState(s=>({
+              products: s.products.map(x=>x.id===p.id?{...x,qty: isIn? x.qty+qtyNum : x.qty-qtyNum}:x),
+              transactions: [{id:'t'+Date.now(), type:isIn?'IN':'OUT', pid:p.id, qty:qtyNum, note:s.stockNote||'-', time:'วันนี้'}, ...s.transactions],
+              stockQty:'1', stockNote:'', stockError:'', stockSuccess: (isIn?'รับสินค้าเข้าเรียบร้อย':'บันทึกการเบิกจ่ายเรียบร้อย'),
+            }));
+          };
+          const content = h('div',{style:{display:'grid',gridTemplateColumns: this.isCompact()?'1fr':'1.4fr 1fr',gap:20,alignItems:'start'}},
+            this.card(h('div',{style:{padding: this.isMobile()?18:26}},
+              this.state.stockError?h('div',{style:{background:C.lBg,color:C.lTx,borderRadius:11,padding:'11px 15px',fontSize:13,marginBottom:16,display:'flex',gap:8,alignItems:'center'}}, this.ic('xCircle',16,C.lRd,2), this.state.stockError):null,
+              this.state.stockSuccess?h('div',{style:{background:C.aBg,color:C.aTx,borderRadius:11,padding:'11px 15px',fontSize:13,marginBottom:16,display:'flex',gap:8,alignItems:'center'}}, this.ic('checkCircle',16,C.aGr,2), this.state.stockSuccess):null,
+              h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+                this.selectField('เลือกสินค้า', p.id, products.map(x=>({value:x.id,label:x.sku+' · '+x.name})), v=>this.setState({stockPid:v,stockError:'',stockSuccess:''})),
+                h('div',{style:{fontSize:12.5,color:C.txSb,marginTop:-10}},'คงเหลือปัจจุบัน '+p.qty+' '+p.unit),
+                this.input(isIn?'จำนวนที่รับเข้า':'จำนวนที่เบิก', this.state.stockQty, v=>this.setState({stockQty:v.replace(/[^0-9]/g,''),stockError:'',stockSuccess:''})),
+                h('div',{},
+                  h('label',{style:{display:'block',fontSize:13.5,fontWeight:600,color:C.txDk,marginBottom:6,fontFamily:this.bf()}},'หมายเหตุ (ไม่บังคับ)'),
+                  h('textarea',{value:this.state.stockNote, onChange:e=>this.setState({stockNote:e.target.value}), rows:3, style:{width:'100%',boxSizing:'border-box',background:C.inputBg,border:`1.5px solid ${C.border}`,borderRadius:12,padding:'12px 14px',fontSize:14,color:C.txDk,fontFamily:this.bf(),outline:'none',resize:'vertical'}})),
+                this.button(isIn?'ยืนยันรับเข้า':'ยืนยันการเบิกจ่าย', confirm, 'primary', 'checkCircle')))),
+            this.card(h('div',{style:{padding:'22px 24px'}},
+              h('div',{style:{fontSize:13.5,fontWeight:700,color:C.txDk,marginBottom:18,fontFamily:this.bf()}},'สรุปรายการ'),
+              h('div',{style:{display:'flex',flexDirection:'column',gap:14}},
+                h('div',{style:{display:'flex',justifyContent:'space-between'}}, h('span',{style:{fontSize:12.5,color:C.txSb}},'คงเหลือปัจจุบัน'), h('span',{style:{fontSize:15,fontWeight:700,color:C.txDk}},p.qty)),
+                h('div',{style:{display:'flex',justifyContent:'space-between'}}, h('span',{style:{fontSize:12.5,color:C.txSb}},isIn?'จำนวนที่รับเข้า':'จำนวนที่เบิก'), h('span',{style:{fontSize:15,fontWeight:700,color:isIn?C.aGr:C.amb}}, (isIn?'+':'-')+qtyNum)),
+                h('div',{style:{height:1,background:C.border}}),
+                h('div',{style:{display:'flex',justifyContent:'space-between'}}, h('span',{style:{fontSize:12.5,color:C.txSb}},'คงเหลือหลังทำรายการ'), h('span',{style:{fontSize:18,fontWeight:800,color:blocked?C.lRd:C.txDk}}, after)),
+                h('div',{style:{background:C.priTint,borderRadius:11,padding:'11px 13px',fontSize:11.5,color:C.txMd,display:'flex',gap:8,lineHeight:1.5}}, this.ic('checkCircle',15,C.pri,2), 'ระบบตรวจสอบยอดแบบเรียลไทม์ และตัดสต็อกใน transaction เดียวเพื่อกันเบิกเกิน')))));
+          return this.appShell(isIn?'รับสินค้าเข้า':'เบิกจ่ายสินค้า', isIn?'บันทึกการรับเข้าและเพิ่มยอดสต็อกอัตโนมัติ':'บันทึกการเบิกจ่ายและตัดสต็อกอัตโนมัติ (กันเบิกเกิน)', content);
+        }
+
+        /* ───────────── LOW STOCK ───────────── */
+        renderLowStock(){
+          const h=React.createElement; const C=this.C();
+          const items = this.state.products.filter(p=>p.qty<=p.reorderPoint);
+          const content = this.card(h('div',{style:{padding:'8px 6px',overflowX:'auto'}},
+            h('table',{style:{width:'100%',borderCollapse:'collapse',minWidth:560}},
+              h('thead',{}, h('tr',{}, ['SKU','ชื่อสินค้า','คงเหลือ','จุดสั่งซื้อ','สถานะ',''].map((th,i)=>h('th',{key:i,style:{textAlign:(i===2||i===3)?'right':(i===5?'center':'left'),fontSize:11.5,color:C.txSb,fontWeight:600,padding:'10px 14px',borderBottom:`1px solid ${C.border}`}},th)))),
+              h('tbody',{}, items.map(p=>{
+                const st=this.statusOf(p);
+                return h('tr',{key:p.id},
+                  h('td',{style:{padding:'13px 14px',fontSize:12.5,color:C.txSb,fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},p.sku),
+                  h('td',{style:{padding:'13px 14px',fontSize:13.5,fontWeight:700,color:C.txDk,fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},p.name),
+                  h('td',{style:{padding:'13px 14px',fontSize:13.5,color:C.txDk,textAlign:'right',fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},p.qty),
+                  h('td',{style:{padding:'13px 14px',fontSize:13,color:C.txSb,textAlign:'right',fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},p.reorderPoint),
+                  h('td',{style:{padding:'13px 14px',textAlign:'right',borderBottom:`1px solid ${C.border}`}}, this.badge(st.label,st.key)),
+                  h('td',{style:{padding:'13px 14px',textAlign:'center',borderBottom:`1px solid ${C.border}`}},
+                    this.button('รับเข้า', ()=>{this.setState({stockPid:p.id,stockQty:'1',stockError:'',stockSuccess:''});this.nav('stock-in');}, 'secondary', null, {padding:'7px 16px',fontSize:12.5})));
+              }))))
+          );
+          return this.appShell('สินค้าใกล้หมด', `รายการที่คงเหลือต่ำกว่าหรือเท่ากับจุดสั่งซื้อ (${items.length} รายการ)`, content);
+        }
+
+        /* ───────────── TRANSACTIONS ───────────── */
+        exportCsv(){
+          const rows = [['วันที่','ประเภท','SKU','ชื่อสินค้า','จำนวน','หมายเหตุ']];
+          const nameOf = pid => (this.state.products.find(p=>p.id===pid)||{}).name || '';
+          const skuOf = pid => (this.state.products.find(p=>p.id===pid)||{}).sku || '';
+          this.state.transactions.forEach(t=> rows.push([t.time, t.type==='IN'?'รับเข้า':'เบิกจ่าย', skuOf(t.pid), nameOf(t.pid), (t.type==='IN'?'':'-')+t.qty, t.note]));
+          const csv = rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+          const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a'); a.href=url; a.download='genius-stock-transactions.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }
+        renderTransactions(){
+          const h=React.createElement; const C=this.C();
+          const nameOf = pid => (this.state.products.find(p=>p.id===pid)||{}).name || '';
+          const skuOf = pid => (this.state.products.find(p=>p.id===pid)||{}).sku || '';
+          let list = this.state.transactions;
+          if (this.state.txFilter!=='ทั้งหมด') list = list.filter(t=> (this.state.txFilter==='รับเข้า'?'IN':'OUT')===t.type);
+          const chip=(label)=>h('span',{key:label,onClick:()=>this.setState({txFilter:label}),style:{cursor:'pointer',background:this.state.txFilter===label?C.pri:C.cardBg,color:this.state.txFilter===label?'#fff':C.txMd,border:`1.5px solid ${this.state.txFilter===label?C.pri:C.border}`,borderRadius:20,padding:'6px 14px',fontSize:12.5,fontWeight:this.state.txFilter===label?700:500}},label);
+          const content = h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+            h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:12}},
+              h('div',{style:{display:'flex',gap:8}}, ['ทั้งหมด','รับเข้า','เบิกจ่าย'].map(chip)),
+              this.button('Export CSV', ()=>this.exportCsv(), 'secondary', 'download')),
+            this.card(h('div',{style:{padding:'8px 6px',overflowX:'auto'}},
+              h('table',{style:{width:'100%',borderCollapse:'collapse',minWidth:640}},
+                h('thead',{}, h('tr',{}, ['วันที่','ประเภท','สินค้า','จำนวน','หมายเหตุ',''].map((th,i)=>h('th',{key:i,style:{textAlign:i===3?'right':(i===5?'center':'left'),fontSize:11.5,color:C.txSb,fontWeight:600,padding:'10px 14px',borderBottom:`1px solid ${C.border}`}},th)))),
+                h('tbody',{}, list.map(t=>h('tr',{key:t.id},
+                  h('td',{style:{padding:'13px 14px',fontSize:12.5,color:C.txSb,fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},t.time),
+                  h('td',{style:{padding:'13px 14px',borderBottom:`1px solid ${C.border}`}}, this.badge(t.type==='IN'?'รับเข้า':'เบิกจ่าย', t.type==='IN'?'ok':'low')),
+                  h('td',{style:{padding:'13px 14px',borderBottom:`1px solid ${C.border}`}}, h('div',{style:{fontSize:13.5,fontWeight:700,color:C.txDk,fontFamily:this.bf()}},nameOf(t.pid)), h('div',{style:{fontSize:11,color:C.txSb}},skuOf(t.pid))),
+                  h('td',{style:{padding:'13px 14px',fontSize:14,fontWeight:700,color:t.type==='IN'?C.aGr:C.amb,textAlign:'right'}}, (t.type==='IN'?'+':'-')+t.qty),
+                  h('td',{style:{padding:'13px 14px',fontSize:12.5,color:C.txMd,fontFamily:this.bf(),borderBottom:`1px solid ${C.border}`}},t.note),
+                  h('td',{style:{padding:'13px 14px',textAlign:'center',borderBottom:`1px solid ${C.border}`}},
+                    h('button',{onClick:()=>{ if(window.confirm('ลบรายการนี้และคืนยอดสต็อก?')) this.setState(s=>({ transactions:s.transactions.filter(x=>x.id!==t.id), products:s.products.map(p=>p.id===t.pid?{...p,qty: t.type==='IN'? p.qty-t.qty : p.qty+t.qty}:p) })); }, style:{background:C.lBg,border:'none',borderRadius:9,width:30,height:30,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}, this.ic('trash',14,C.lRd,2))))))))
+            ));
+          return this.appShell('ประวัติการเคลื่อนไหว', list.length+' รายการ', content);
+        }
+
+        renderVals(){
+          const C = this.C();
+          const p = this.state.page;
+          let tree;
+          if (p==='login') tree = this.renderLogin();
+          else if (p==='register') tree = this.renderRegister();
+          else if (p==='forgot') tree = this.renderForgot();
+          else if (p==='products') tree = this.renderProducts();
+          else if (p==='product-new' || p==='product-edit') tree = this.renderProductForm();
+          else if (p==='stock-in') tree = this.renderStockForm(true);
+          else if (p==='stock-out') tree = this.renderStockForm(false);
+          else if (p==='low-stock') tree = this.renderLowStock();
+          else if (p==='transactions') tree = this.renderTransactions();
+          else tree = this.renderDashboard();
+          return {
+            rootStyle: {minHeight:'100vh', width:'100%', background:C.pageBg, fontFamily:"'Inter','Anuphan',sans-serif", color:C.txDk},
+            appTree: tree,
+          };
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -17,11 +17,13 @@
 - รองรับการแก้ไข/ลบรายการย้อนหลัง โดยยอดคงเหลือคำนวณใหม่ให้อัตโนมัติ
 
 ### ขอบเขต (Scope)
-- ✅ ใช้งานภายในองค์กร — **ไม่มีระบบ login / สิทธิ์ผู้ใช้**
+- ✅ ใช้งานภายในองค์กร — มีระบบ Auth (login / register / forgot-password / reset-password)
+  ด้วย **Better Auth** และ guard ทุกหน้าด้วย proxy (Next.js 16)
 - ✅ จัดการสินค้า (CRUD) พร้อม SKU, หมวดหมู่, หน่วยนับ, จุดสั่งซื้อขั้นต่ำ
 - ✅ Stock In / Stock Out พร้อมกันเบิกเกิน
 - ✅ Dashboard + แจ้งเตือนใกล้หมด (แสดงบนหน้าจอเท่านั้น)
 - ✅ ประวัติการเคลื่อนไหว + Export CSV/Excel + กราฟแนวโน้ม
+- ❌ ไม่มี roles / permissions (สิทธิ์ผู้ใช้แยกระดับ) — ทุก user ที่ login แล้วมีสิทธิ์เท่ากัน
 - ❌ ไม่ต่อ integration ภายนอก (LINE / email)
 - ❌ ไม่มี multi-warehouse / batch / lot / expiry
 
@@ -113,10 +115,10 @@ model StockTransaction {
 ## 3. ฟีเจอร์ทั้งหมด + Acceptance Criteria
 
 ### F1 — จัดการสินค้า (Product CRUD)
-- [ ] สร้าง/อ่าน/แก้ไข/ลบสินค้าได้
-- [ ] SKU ต้องไม่ซ้ำ — ถ้าซ้ำต้องแสดง error ชัดเจน
-- [ ] มีหน้าตารางสินค้า ค้นหาได้ และกรองตามหมวดหมู่
-- [ ] แสดง badge สถานะสต็อก (ปกติ / ใกล้หมด / หมด)
+- [x] สร้าง/อ่าน/แก้ไข/ลบสินค้าได้
+- [x] SKU ต้องไม่ซ้ำ — ถ้าซ้ำต้องแสดง error ชัดเจน
+- [x] มีหน้าตารางสินค้า ค้นหาได้ และกรองตามหมวดหมู่
+- [x] แสดง badge สถานะสต็อก (ปกติ / ใกล้หมด / หมด)
 
 **Acceptance:**
 - สร้างสินค้าใหม่ด้วย SKU ที่มีอยู่แล้ว → ถูกปฏิเสธพร้อมข้อความ
@@ -124,19 +126,19 @@ model StockTransaction {
 - ฟิลด์ที่จำเป็น (SKU, ชื่อ, หน่วย) ว่างไม่ได้
 
 ### F2 — รับสินค้าเข้า (Stock In)
-- [ ] ฟอร์มเลือกสินค้า + จำนวน + หมายเหตุ
-- [ ] บันทึก StockTransaction type=IN และเพิ่ม `quantity` ของสินค้า
-- [ ] แสดงรายการรับล่าสุด
+- [x] ฟอร์มเลือกสินค้า + จำนวน + หมายเหตุ
+- [x] บันทึก StockTransaction type=IN และเพิ่ม `quantity` ของสินค้า
+- [x] แสดงรายการรับล่าสุด
 
 **Acceptance:**
 - รับเข้า 10 หน่วย → `quantity` เพิ่มขึ้น 10 ทันที
 - จำนวนต้อง > 0
 
 ### F3 — เบิกสินค้าออก (Stock Out) + กันเบิกเกิน
-- [ ] ฟอร์มเลือกสินค้า + จำนวน + หมายเหตุ
-- [ ] ตรวจสอบ `quantity >= จำนวนที่เบิก` **ภายใน `prisma.$transaction`**
-- [ ] ถ้าเบิกเกิน → บล็อก พร้อม error ชัดเจน (hard block)
-- [ ] บันทึก type=OUT และลด `quantity`
+- [x] ฟอร์มเลือกสินค้า + จำนวน + หมายเหตุ
+- [x] ตรวจสอบ `quantity >= จำนวนที่เบิก` **ภายใน `prisma.$transaction`**
+- [x] ถ้าเบิกเกิน → บล็อก พร้อม error ชัดเจน (hard block)
+- [x] บันทึก type=OUT และลด `quantity`
 
 **Acceptance:**
 - เบิกน้อยกว่า/เท่ายอดคงเหลือ → สำเร็จ, `quantity` ลดลงถูกต้อง
@@ -144,19 +146,19 @@ model StockTransaction {
 - การเบิกพร้อมกันสองรายการ (race) → ยอดรวมไม่ติดลบ
 
 ### F4 — Dashboard + แจ้งเตือนใกล้หมด
-- [ ] การ์ดสรุป: จำนวน SKU, รวมชิ้น, จำนวนสินค้าใกล้หมด, จำนวนสินค้าหมด
-- [ ] ตารางสินค้าใกล้หมด (`quantity <= reorderPoint`) และหมด (`quantity <= 0`)
-- [ ] กราฟแนวโน้มการเคลื่อนไหว IN/OUT
+- [x] การ์ดสรุป: จำนวน SKU, รวมชิ้น, จำนวนสินค้าใกล้หมด, จำนวนสินค้าหมด
+- [x] ตารางสินค้าใกล้หมด (`quantity <= reorderPoint`) และหมด (`quantity <= 0`)
+- [x] กราฟแนวโน้มการเคลื่อนไหว IN/OUT
 
 **Acceptance:**
 - สินค้าที่ `quantity <= reorderPoint` แสดงในรายการ "ใกล้หมด"
 - ตัวเลขบนการ์ดตรงกับข้อมูลจริง
 
 ### F5 — ประวัติการเคลื่อนไหว + แก้ไข/ลบ + Export
-- [ ] หน้าประวัติรวม IN/OUT กรองตามวันที่/สินค้า/ประเภท
-- [ ] แก้ไข/ลบ transaction ได้ → ปรับ `quantity` ใหม่ให้สอดคล้อง
-- [ ] แก้ไขรายการ OUT (เพิ่มจำนวน) ต้อง re-validate กันเบิกเกิน
-- [ ] Export CSV (UTF-8 BOM ให้ Excel อ่านไทยได้)
+- [x] หน้าประวัติรวม IN/OUT กรองตามวันที่/สินค้า/ประเภท
+- [x] แก้ไข/ลบ transaction ได้ → ปรับ `quantity` ใหม่ให้สอดคล้อง
+- [x] แก้ไขรายการ OUT (เพิ่มจำนวน) ต้อง re-validate กันเบิกเกิน
+- [x] Export CSV (UTF-8 BOM ให้ Excel อ่านไทยได้)
 
 **Acceptance:**
 - แก้จำนวน transaction → ยอดคงเหลือคำนวณใหม่ถูกต้อง
@@ -170,23 +172,25 @@ model StockTransaction {
 ### Phase 1 — Foundation (วันที่ 1)
 ตั้งรากฐานโปรเจกต์และฐานข้อมูลให้พร้อมใช้งาน
 
-- [ ] ตั้งโปรเจกต์ Next.js 16 (App Router) + TypeScript ด้วย pnpm
-- [ ] ติดตั้ง + ตั้งค่า Tailwind CSS v4 และ shadcn/ui
-- [ ] ติดตั้ง Prisma และเขียน schema: `Product`, `StockTransaction`, `enum TransactionType{IN,OUT}`
-- [ ] เชื่อมต่อ PostgreSQL (`.env` → `DATABASE_URL`)
-- [ ] รัน migration ครั้งแรก (`prisma migrate dev`)
-- [ ] เขียน seed script ข้อมูลตัวอย่าง **SKU-1001 ถึง SKU-1007**
-- [ ] วาง `CLAUDE.md` เป็น "สมองของโปรเจกต์" (สถาปัตยกรรม, คำสั่ง, ข้อตกลง)
+- [x] ตั้งโปรเจกต์ Next.js 16 (App Router) + TypeScript ด้วย pnpm
+- [x] ติดตั้ง + ตั้งค่า Tailwind CSS v4 และ shadcn/ui
+- [x] ติดตั้ง Prisma และเขียน schema: `Product`, `StockTransaction`, `enum TransactionType{IN,OUT}`
+- [x] เชื่อมต่อ PostgreSQL (`.env` → `DATABASE_URL`)
+- [x] รัน migration ครั้งแรก (`prisma migrate dev`)
+- [x] เขียน seed script ข้อมูลตัวอย่าง **SKU-1001 ถึง SKU-1007**
+- [x] วาง `CLAUDE.md` เป็น "สมองของโปรเจกต์" (สถาปัตยกรรม, คำสั่ง, ข้อตกลง)
 
 ### Phase 2 — Core Features (วันที่ 2)
 สร้างฟีเจอร์หลักให้ใช้งานได้ครบวงจร
 
-- [ ] CRUD สินค้าครบวงจร (Create / Read / Update / Delete) ด้วย Server Actions + zod
-- [ ] หน้าตารางสินค้า: ค้นหา + กรองหมวดหมู่ + badge สถานะ
-- [ ] Stock In: ฟอร์ม + บันทึก transaction + เพิ่ม quantity
-- [ ] Stock Out: กันเบิกเกินด้วย `prisma.$transaction` (เช็ก + ปรับยอด atomic)
-- [ ] Dashboard: การ์ดสรุป + ตารางสินค้าใกล้หมด + กราฟแนวโน้ม
-- [ ] Custom Slash Commands สำหรับงานที่ทำบ่อย (เช่น seed, migrate, add-product)
+- [x] CRUD สินค้าครบวงจร (Create / Read / Update / Delete) ด้วย Server Actions + zod
+- [x] หน้าตารางสินค้า: ค้นหา + กรองหมวดหมู่ + badge สถานะ
+- [x] Stock In: ฟอร์ม + บันทึก transaction + เพิ่ม quantity
+- [x] Stock Out: กันเบิกเกินด้วย `prisma.$transaction` (เช็ก + ปรับยอด atomic)
+- [x] Dashboard: การ์ดสรุป + ตารางสินค้าใกล้หมด + กราฟแนวโน้ม
+- [x] Custom Slash Commands สำหรับงานที่ทำบ่อย (เช่น seed, migrate, add-product)
+- [x] ระบบ Auth (Better Auth): login / register / forgot-password / reset-password
+      + guard ทุกหน้าด้วย proxy (Next.js 16)
 
 ### Phase 3 — Agentic Quality (วันที่ 3)
 ยกระดับคุณภาพด้วย agentic workflow
@@ -226,3 +230,7 @@ Deploy ขึ้น production พร้อมความปลอดภัย�
 | `/stock-in` | ฟอร์มรับเข้า + รายการล่าสุด |
 | `/stock-out` | ฟอร์มเบิกออก + รายการล่าสุด (กันเบิกเกิน) |
 | `/transactions` | ประวัติรวม + แก้ไข/ลบ + Export CSV |
+| `/login` | เข้าสู่ระบบ (Better Auth) |
+| `/register` | สมัครสมาชิก (Better Auth) |
+| `/forgot-password` | ขอลิงก์รีเซ็ตรหัสผ่าน (Better Auth) |
+| `/reset-password` | ตั้งรหัสผ่านใหม่จากลิงก์รีเซ็ต (Better Auth) |
