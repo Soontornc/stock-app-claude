@@ -38,17 +38,32 @@ export default async function DashboardPage() {
   const sevenDaysAgo = new Date(startOfToday)
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6)
 
-  const [products, weekTx, recentTx] = await Promise.all([
-    prisma.product.findMany({ orderBy: { sku: 'asc' } }),
-    prisma.stockTransaction.findMany({
-      where: { createdAt: { gte: sevenDaysAgo } },
-    }),
-    prisma.stockTransaction.findMany({
-      orderBy: { createdAt: 'desc' },
-      take: 6,
-      include: { product: { select: { sku: true, name: true, unit: true } } },
-    }),
-  ])
+  const fetchDashboardData = () =>
+    Promise.all([
+      prisma.product.findMany({ orderBy: { sku: 'asc' } }),
+      prisma.stockTransaction.findMany({
+        where: { createdAt: { gte: sevenDaysAgo } },
+      }),
+      prisma.stockTransaction.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 6,
+        include: {
+          product: { select: { sku: true, name: true, unit: true } },
+        },
+      }),
+    ])
+
+  let products: Awaited<ReturnType<typeof fetchDashboardData>>[0] = []
+  let weekTx: Awaited<ReturnType<typeof fetchDashboardData>>[1] = []
+  let recentTx: Awaited<ReturnType<typeof fetchDashboardData>>[2] = []
+  let dbError = false
+
+  try {
+    ;[products, weekTx, recentTx] = await fetchDashboardData()
+  } catch (error) {
+    console.error('Dashboard: failed to reach database', error)
+    dbError = true
+  }
 
   const totalQuantity = products.reduce((sum, p) => sum + p.quantity, 0)
   const lowItems = products
@@ -82,7 +97,20 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <PageHeader title="ภาพรวมคลังสินค้า" subtitle="อัปเดตล่าสุดวันนี้" />
 
-      {lowItems.length > 0 ? (
+      {dbError ? (
+        <div className="border-destructive/30 bg-destructive/10 flex flex-wrap items-center gap-3.5 rounded-2xl border px-5 py-3.5">
+          <AlertTriangle
+            className="text-destructive size-5 shrink-0"
+            strokeWidth={1.9}
+          />
+          <div className="flex-1 text-[13.5px]">
+            ยังไม่ได้เชื่อมต่อฐานข้อมูล —
+            ข้อมูลด้านล่างอาจไม่ถูกต้องหรือไม่ครบถ้วน
+          </div>
+        </div>
+      ) : null}
+
+      {!dbError && lowItems.length > 0 ? (
         <div className="flex flex-wrap items-center gap-3.5 rounded-2xl border border-[color-mix(in_oklch,var(--brand-amber),transparent_80%)] bg-[color-mix(in_oklch,var(--brand-amber),transparent_88%)] px-5 py-3.5">
           <AlertTriangle
             className="text-brand-amber size-5 shrink-0"

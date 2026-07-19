@@ -33,12 +33,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const products = await prisma.product.findMany({
-    select: { quantity: true, reorderPoint: true },
-  })
-  const lowStockCount = products.filter(
-    (p) => p.quantity <= p.reorderPoint,
-  ).length
+  let lowStockCount = 0
+  try {
+    const products = await prisma.product.findMany({
+      select: { quantity: true, reorderPoint: true },
+    })
+    lowStockCount = products.filter((p) => p.quantity <= p.reorderPoint).length
+  } catch (error) {
+    console.error('RootLayout: failed to reach database', error)
+  }
 
   return (
     <html
