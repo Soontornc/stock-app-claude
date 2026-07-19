@@ -55,15 +55,31 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # them — copy the whole generated folder explicitly as a safety net.
 COPY --from=builder --chown=nextjs:nodejs /app/lib/generated/prisma ./lib/generated/prisma
 
+# ---------- Prisma migrate support (Prisma 7) ----------
 # schema + migrations สำหรับรัน prisma migrate deploy บน production
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+# Prisma 7 อ่าน datasource.url จาก prisma.config.ts (ไม่ได้อ่านจาก schema แล้ว)
 COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
-# modules ที่ prisma.config.ts ต้อง import ตอนรัน migrate
+
+# prisma.config.ts import 'dotenv/config' ตอนถูกโหลด — standalone trace ไม่ได้ติดมาให้
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/dotenv ./node_modules/dotenv
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
+
+# Prisma CLI ฉบับเต็ม: โปรเจกต์ใช้ pnpm (node_modules เป็น symlink ชี้เข้า .pnpm)
+# การ COPY ทีละโฟลเดอร์จะได้ deps ไม่ครบ (@prisma/engines, @prisma/config ฯลฯ)
+# จึงติดตั้งด้วย npm แบบ flat แล้ว merge เข้า node_modules แทน
+# ⚠️ pin เวอร์ชันให้ตรงกับ prisma ใน package.json เสมอเมื่ออัปเกรด
+RUN npm install --prefix /tmp/pcli prisma@7.8.0 \
+  && cp -r /tmp/pcli/node_modules/. /app/node_modules/ \
+  && rm -rf /tmp/pcli \
+  && chown -R nextjs:nodejs /app/node_modules
 
 USER nextjs
 
 EXPOSE 3000
 
 CMD ["node", "server.js"]
+
+# คำสั่ง migrate บน production (ใช้ใน deploy.yml และรันมือ):
+#   docker compose -f docker-compose.prod.yml exec -T app \
+#     node node_modules/prisma/build/index.js migrate deploy

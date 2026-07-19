@@ -7,7 +7,9 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/stock-app
+  # ใช้ github.repository (= soontornc/stock-app-claude) ให้ตรงกับ image
+  # ใน docker-compose.prod.yml บน server เป๊ะๆ — ห้าม hardcode ชื่ออื่น
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -17,7 +19,8 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v4
+      # v5/v6: แก้ warning "Node.js 20 is deprecated" จากเวอร์ชันเก่า
+      - uses: actions/checkout@v5
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
         with:
@@ -31,7 +34,7 @@ jobs:
           tags: |
             type=sha,format=short
             type=raw,value=latest,enable={{is_default_branch}}
-      - uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v6
         with:
           context: .
           push: true
@@ -51,15 +54,33 @@ jobs:
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
+          # VPS_SSH_PRIVATE_KEY ต้องเป็น key ของ CI (stock_app_ci) ที่ไม่มี passphrase
           key: ${{ secrets.VPS_SSH_PRIVATE_KEY }}
           port: 22
           script: |
             set -e
+
+            echo "==> Navigating to app directory"
             cd /home/deploy/stock-app
+
+            echo "==> Logging in to ghcr.io"
             echo "${{ secrets.GHCR_PAT }}" | \
               docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+
+            echo "==> Pulling latest image"
             docker compose -f docker-compose.prod.yml pull
+
+            echo "==> Starting updated containers"
             docker compose -f docker-compose.prod.yml up -d --remove-orphans
-            docker compose -f docker-compose.prod.yml exec -T app npx prisma migrate deploy
+
+            echo "==> Running database migrations"
+            # เรียก Prisma CLI ตรงๆ — npx ใช้ไม่ได้เพราะ node_modules/.bin
+            # ใน standalone image ไม่มีตัวลิงก์ prisma (เจอ "sh: prisma: not found")
+            docker compose -f docker-compose.prod.yml exec -T app \
+              node node_modules/prisma/build/index.js migrate deploy
+
+            echo "==> Removing unused images"
             docker image prune -f
+
+            echo "==> Deploy complete!"
             docker compose -f docker-compose.prod.yml ps
