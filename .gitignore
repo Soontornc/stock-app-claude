@@ -46,3 +46,6 @@ next-env.d.ts
 
 # MCP config (contains DB credentials)
 .mcp.json
+
+# Claude Code worktrees (local, machine-specific)
+/.claude/worktrees/
