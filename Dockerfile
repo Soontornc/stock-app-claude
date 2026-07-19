@@ -57,6 +57,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/lib/generated/prisma ./lib/genera
 
 # schema + migrations สำหรับรัน prisma migrate deploy บน production
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
 
 USER nextjs
 
