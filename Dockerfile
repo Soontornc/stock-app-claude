@@ -68,9 +68,12 @@ COPY --from=builder --chown=nextjs:nodejs /app/node_modules/dotenv ./node_module
 # Prisma CLI ฉบับเต็ม: โปรเจกต์ใช้ pnpm (node_modules เป็น symlink ชี้เข้า .pnpm)
 # การ COPY ทีละโฟลเดอร์จะได้ deps ไม่ครบ (@prisma/engines, @prisma/config ฯลฯ)
 # จึงติดตั้งด้วย npm แบบ flat แล้ว merge เข้า node_modules แทน
+
 # ⚠️ pin เวอร์ชันให้ตรงกับ prisma ใน package.json เสมอเมื่ออัปเกรด
+# cp อาจเจอ conflict กับของเดิม (react ฯลฯ) — ยอมให้ข้ามได้ แล้วพิสูจน์ด้วยการรัน CLI จริงแทน
 RUN npm install --prefix /tmp/pcli prisma@7.8.0 \
-  && cp -r /tmp/pcli/node_modules/. /app/node_modules/ \
+  && (cp -r /tmp/pcli/node_modules/. /app/node_modules/ 2>/dev/null || true) \
+  && node /app/node_modules/prisma/build/index.js --version \
   && rm -rf /tmp/pcli \
   && chown -R nextjs:nodejs /app/node_modules
 
